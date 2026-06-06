@@ -358,6 +358,18 @@
 
     <!-- Script logic -->
     <script>
+        // Theme initialization
+        const initTheme = () => {
+            const savedTheme = localStorage.getItem('theme');
+            const devicePrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme === 'dark' || (!savedTheme && devicePrefersDark)) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        };
+        initTheme();
+
         // Supabase Database Connection Config (Replaced by user)
         const SUPABASE_URL = 'https://wsxycwkgoxziaxzsfiae.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzeHljd2tnb3h6aWF4enNmaWFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3MTQzNjEsImV4cCI6MjA5NjI5MDM2MX0.PjayQwVLVnsF6Ai_sdVJb9wy7U_xiAuV1OJBkXL0i8E';
@@ -374,11 +386,60 @@
         const ADMIN_USERNAME = 'admin';
         const ADMIN_PASSWORD = 'lighthouse2026';
 
-        // Fallback data arrays when live Supabase is offline/unconfigured
-        let mockSurveyResponses = [];
-        let mockResources = [];
+        // Local storage seeding functions
+        function initializeLocalStorageMockData() {
+            if (localStorage.getItem('page-views') === null) {
+                localStorage.setItem('page-views', '342');
+            }
+            if (!localStorage.getItem('page-view-history')) {
+                const history = [];
+                const now = Date.now();
+                for (let i = 0; i < 50; i++) {
+                    const offset = Math.random() * 3600000 * 24 * 5;
+                    history.push(new Date(now - offset).toISOString());
+                }
+                localStorage.setItem('page-view-history', JSON.stringify(history));
+            }
+            if (localStorage.getItem('local-attempts-count') === null) {
+                localStorage.setItem('local-attempts-count', '28');
+                localStorage.setItem('local-attempts-success', '24');
+            }
+            if (!localStorage.getItem('mock-survey-responses')) {
+                const responses = [
+                    { id: 101, created_at: new Date(Date.now() - 3600000 * 24 * 4).toISOString(), q1_answer: "Peer support is about connection, not fixing someone.", q2_answer: "Knowing that they won't be judged by their peers." },
+                    { id: 102, created_at: new Date(Date.now() - 3600000 * 24 * 3).toISOString(), q1_answer: "It creates a safe space where lived experience is valued.", q2_answer: "Seeing other teens speak openly about their mental health." },
+                    { id: 103, created_at: new Date(Date.now() - 3600000 * 24 * 2).toISOString(), q1_answer: "We are not therapists, we are companions on the journey.", q2_answer: "Easy-to-access digital spaces and absolute anonymity." },
+                    { id: 104, created_at: new Date(Date.now() - 3600000 * 12).toISOString(), q1_answer: "It helps reduce the clinical feeling of mental health support.", q2_answer: "Understanding that it's okay to not be okay, shared by peers." }
+                ];
+                localStorage.setItem('mock-survey-responses', JSON.stringify(responses));
+            }
+            if (!localStorage.getItem('mock-resources')) {
+                const resources = [
+                    { id: 1, title: "Active Listening Guide.pdf", category: "Guides & Handbooks", size: "1.4 MB" },
+                    { id: 2, title: "Peer Support Toolkit.pdf", category: "Peer Support Toolkits", size: "3.2 MB" },
+                    { id: 3, title: "Crisis Intervention Infographic.pdf", category: "Infographics & Summaries", size: "850 KB" }
+                ];
+                localStorage.setItem('mock-resources', JSON.stringify(resources));
+            }
+        }
 
+        // Run local seeds
+        initializeLocalStorageMockData();
+
+        // Arrays to hold local state data
+        let mockSurveyResponses = JSON.parse(localStorage.getItem('mock-survey-responses'));
+        let mockResources = JSON.parse(localStorage.getItem('mock-resources'));
+        let lastFetchedSubmissions = [];
+        let currentChartType = 'submissions';
         let submissionsChart = null;
+
+        // Save methods
+        function saveMockSurveyResponses() {
+            localStorage.setItem('mock-survey-responses', JSON.stringify(mockSurveyResponses));
+        }
+        function saveMockResources() {
+            localStorage.setItem('mock-resources', JSON.stringify(mockResources));
+        }
 
         // DOM elements
         const loginScreen = document.getElementById('admin-login-screen');
@@ -394,6 +455,7 @@
         const directoryList = document.getElementById('resource-directory-list');
 
         const statTotalSubmissions = document.getElementById('stat-total-submissions');
+        const themeToggleAdmin = document.getElementById('theme-toggle-admin');
 
         // Navigation Highlight
         const navItems = document.querySelectorAll('.admin-nav-item');
@@ -414,6 +476,110 @@
             }, 4000);
         }
 
+        // Theme Toggle Action
+        if (themeToggleAdmin) {
+            themeToggleAdmin.addEventListener('click', () => {
+                const isCurrentlyDark = document.body.classList.toggle('dark-mode');
+                localStorage.setItem('theme', isCurrentlyDark ? 'dark' : 'light');
+                logAuditEvent("Theme", `Theme switched to ${isCurrentlyDark ? 'Dark Mode' : 'Light Mode'}`, "info");
+                showToast(`Switched to ${isCurrentlyDark ? 'dark' : 'light'} mode.`);
+            });
+        }
+
+        // Audit Trail implementation
+        const auditTableBody = document.getElementById('audit-table-body');
+        const clearAuditBtn = document.getElementById('clear-audit-btn');
+
+        function getAuditLogs() {
+            let logs = localStorage.getItem('admin-audit-logs');
+            if (!logs) {
+                logs = [
+                    {
+                        timestamp: new Date(Date.now() - 3600000 * 2).toISOString(),
+                        module: "System",
+                        description: "Control Hub initialized with storage sync listener",
+                        status: "success"
+                    },
+                    {
+                        timestamp: new Date(Date.now() - 3600000).toISOString(),
+                        module: "Auth",
+                        description: "Developer bypass credentials matched for user: admin",
+                        status: "success"
+                    }
+                ];
+                localStorage.setItem('admin-audit-logs', JSON.stringify(logs));
+            } else {
+                logs = JSON.parse(logs);
+            }
+            return logs;
+        }
+
+        function saveAuditLogs(logs) {
+            localStorage.setItem('admin-audit-logs', JSON.stringify(logs));
+        }
+
+        function logAuditEvent(module, description, status = "success") {
+            const logs = getAuditLogs();
+            logs.unshift({
+                timestamp: new Date().toISOString(),
+                module: module,
+                description: description,
+                status: status
+            });
+            if (logs.length > 100) logs.pop();
+            saveAuditLogs(logs);
+            renderAuditLogs();
+        }
+
+        function renderAuditLogs() {
+            if (!auditTableBody) return;
+            const logs = getAuditLogs();
+            auditTableBody.innerHTML = '';
+
+            if (logs.length === 0) {
+                auditTableBody.innerHTML = `<tr><td colspan="4" class="text-center py-8">No audit activities logged.</td></tr>`;
+                return;
+            }
+
+            logs.forEach(log => {
+                const tr = document.createElement('tr');
+                const dateStr = new Date(log.timestamp).toLocaleString(undefined, {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+
+                let statusBadge = '';
+                if (log.status === 'success') {
+                    statusBadge = `<span style="display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; background: rgba(16, 185, 129, 0.15); color: #10B981;">Success</span>`;
+                } else if (log.status === 'error') {
+                    statusBadge = `<span style="display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; background: rgba(239, 68, 68, 0.15); color: #EF4444;">Error</span>`;
+                } else {
+                    statusBadge = `<span style="display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; background: rgba(59, 130, 246, 0.15); color: #3B82F6;">Info</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td class="text-muted" style="font-size:0.85rem">${dateStr}</td>
+                    <td><strong style="color: var(--clr-primary); font-size: 0.85rem; font-family: monospace;">[${escapeHTML(log.module)}]</strong></td>
+                    <td style="font-size: 0.9rem;">${escapeHTML(log.description)}</td>
+                    <td style="text-align: center;">${statusBadge}</td>
+                `;
+                auditTableBody.appendChild(tr);
+            });
+        }
+
+        if (clearAuditBtn) {
+            clearAuditBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to clear the system audit log history?')) {
+                    saveAuditLogs([]);
+                    logAuditEvent("Audit", "System audit log cleared by administrator", "info");
+                    showToast("System audit log cleared.");
+                }
+            });
+        }
+
         // Login Handler
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -425,6 +591,7 @@
             if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
                 showToast('Logged in successfully.');
                 useMockData = (supabaseClient === null); // Load live Supabase data if connected!
+                logAuditEvent("Auth", `Administrative login success (user: ${username})`, "success");
                 initializeDashboard();
                 return;
             }
@@ -440,19 +607,23 @@
 
                     showToast('Logged in successfully via Supabase!');
                     useMockData = false; // Set to false to fetch live responses
+                    logAuditEvent("Auth", `Administrative login success via Supabase (user: ${username})`, "success");
                     initializeDashboard();
                 } catch (err) {
                     loginError.textContent = 'Auth Error: ' + err.message;
                     loginError.style.display = 'block';
+                    logAuditEvent("Auth", `Failed login attempt (user: ${username}): ${err.message}`, "error");
                 }
             } else {
                 loginError.textContent = 'Invalid credentials. Hint: use admin / lighthouse2026';
                 loginError.style.display = 'block';
+                logAuditEvent("Auth", `Failed login attempt (user: ${username})`, "error");
             }
         });
 
         // Logout Handler
         logoutBtn.addEventListener('click', async () => {
+            logAuditEvent("Auth", "Administrative logout", "info");
             if (supabaseClient) {
                 await supabaseClient.auth.signOut();
             }
@@ -497,6 +668,7 @@
                 localStorage.setItem(`metric-num-${i}`, numVal);
                 localStorage.setItem(`metric-lbl-${i}`, lblVal);
             }
+            logAuditEvent("Metrics", "Website dashboard metrics edited & saved", "success");
             showToast('Website metrics updated successfully!');
         });
 
@@ -508,6 +680,7 @@
                     localStorage.removeItem(`metric-lbl-${i}`);
                 }
                 populateMetricsFields();
+                logAuditEvent("Metrics", "Website dashboard metrics reset to defaults", "info");
                 showToast('Website metrics reset to default values.');
             }
         });
@@ -520,6 +693,7 @@
             populateMetricsFields();
             fetchSurveyResponses();
             fetchResources();
+            renderAuditLogs();
         }
 
         // Fetch Survey Submissions and Stats
@@ -533,11 +707,12 @@
                         .order('created_at', { ascending: false });
 
                     if (surveyError) throw surveyError;
+                    lastFetchedSubmissions = surveys;
                     renderSubmissionsTable(surveys);
                     
                     // 2. Fetch simulator attempts
-                    let attemptsCount = 0; // Clean default fallback
-                    let empathyRate = 0;   // Clean default fallback
+                    let attemptsCount = 0; 
+                    let empathyRate = 0;   
 
                     try {
                         const { data: attempts, error: attemptsError } = await supabaseClient
@@ -547,7 +722,6 @@
                         if (!attemptsError && attempts) {
                             if (attempts.length > 0) {
                                 attemptsCount = attempts.length;
-                                // Calculate success rate of Connection
                                 const successAttempts = attempts.filter(a => a.outcome === 'success').length;
                                 empathyRate = Math.round((successAttempts / attemptsCount) * 100);
                             } else {
@@ -559,20 +733,25 @@
                         console.warn('Could not query simulator_attempts table, using default values.');
                     }
 
-                    // Update UI stats widgets
                     updateStatsWidgets(surveys.length, attemptsCount, empathyRate);
-                    buildAnalyticsChart(surveys);
+                    buildAnalyticsChart();
                 } catch (err) {
                     console.error('Error fetching survey data:', err.message);
+                    lastFetchedSubmissions = [];
                     renderSubmissionsTable([]);
-                    // Fallback to defaults
                     updateStatsWidgets(0, 0, 0);
                 }
             } else {
                 // Load local mock values
+                lastFetchedSubmissions = mockSurveyResponses;
                 renderSubmissionsTable(mockSurveyResponses);
-                updateStatsWidgets(mockSurveyResponses.length, 0, 0);
-                buildAnalyticsChart(mockSurveyResponses);
+
+                const attemptsCount = parseInt(localStorage.getItem('local-attempts-count') || '28');
+                const successCount = parseInt(localStorage.getItem('local-attempts-success') || '24');
+                const empathyRate = attemptsCount > 0 ? Math.round((successCount / attemptsCount) * 100) : 85;
+
+                updateStatsWidgets(mockSurveyResponses.length, attemptsCount, empathyRate);
+                buildAnalyticsChart();
             }
         }
 
@@ -582,12 +761,17 @@
             
             const attemptsEl = document.getElementById('stat-simulator-attempts');
             const scoreEl = document.getElementById('stat-empathy-score');
+            const viewsEl = document.getElementById('stat-total-views');
             
             if (attemptsEl) {
                 attemptsEl.textContent = attempts.toLocaleString();
             }
             if (scoreEl) {
                 scoreEl.textContent = `${score}%`;
+            }
+            if (viewsEl) {
+                let views = localStorage.getItem('page-views') || '342';
+                viewsEl.textContent = parseInt(views).toLocaleString();
             }
         }
 
@@ -643,14 +827,18 @@
                         .eq('id', id);
                     if (error) throw error;
 
+                    logAuditEvent("Moderation", `Deleted survey response record #${id} from Supabase`, "success");
                     showToast(`Deleted response #${id} from Supabase.`);
                     fetchSurveyResponses();
                 } catch (err) {
                     alert('Failed to delete response: ' + err.message);
+                    logAuditEvent("Moderation", `Failed deletion of response #${id}: ${err.message}`, "error");
                 }
             } else {
                 // Mock deletion locally
                 mockSurveyResponses = mockSurveyResponses.filter(item => item.id !== id);
+                saveMockSurveyResponses();
+                logAuditEvent("Moderation", `Deleted survey response record #${id} (mock)`, "success");
                 showToast(`Deleted mock response #${id}.`);
                 fetchSurveyResponses();
             }
@@ -669,7 +857,6 @@
                     renderResourcesDirectoryList(data);
                 } catch (err) {
                     console.error('Error fetching resources:', err.message);
-                    // Fallback to mock data
                     renderResourcesDirectoryList(mockResources);
                 }
             } else {
@@ -724,13 +911,17 @@
                         .eq('id', id);
 
                     if (error) throw error;
+                    logAuditEvent("Resources", `Removed resource file #${id} from Supabase`, "success");
                     showToast('Resource file removed from Supabase.');
                     fetchResources();
                 } catch (err) {
                     alert('Failed to remove resource: ' + err.message);
+                    logAuditEvent("Resources", `Failed removal of resource file #${id}: ${err.message}`, "error");
                 }
             } else {
                 mockResources = mockResources.filter(item => item.id !== id);
+                saveMockResources();
+                logAuditEvent("Resources", `Removed resource file #${id} (mock)`, "success");
                 showToast('Resource file removed (mock).');
                 renderResourcesDirectoryList(mockResources);
             }
@@ -753,7 +944,7 @@
                         .from('resources')
                         .insert([
                             {
-                                id: Date.now(), // Generate a unique id based on timestamp
+                                id: Date.now(), 
                                 title: titleInput + ' (' + filename + ')',
                                 category: categoryText,
                                 size: sizeStr
@@ -761,11 +952,13 @@
                         ]);
                     if (error) throw error;
 
+                    logAuditEvent("Resources", `Uploaded resource: "${titleInput}" (${filename}) to Supabase`, "success");
                     showToast(`Published resource: "${titleInput}" to Supabase.`);
                     uploadForm.reset();
                     fetchResources();
                 } catch (err) {
                     alert('Failed to save resource to database: ' + err.message);
+                    logAuditEvent("Resources", `Failed upload of resource "${titleInput}": ${err.message}`, "error");
                 }
             } else {
                 const newRes = {
@@ -774,7 +967,9 @@
                     category: categoryText,
                     size: sizeStr
                 };
-                mockResources.push(newRes);
+                mockResources.unshift(newRes);
+                saveMockResources();
+                logAuditEvent("Resources", `Uploaded resource: "${titleInput}" (${filename}) (mock)`, "success");
                 showToast(`Published resource: "${titleInput}" (mock)`);
                 uploadForm.reset();
                 renderResourcesDirectoryList(mockResources);
@@ -785,44 +980,137 @@
         refreshBtn.addEventListener('click', () => {
             fetchSurveyResponses();
             fetchResources();
+            logAuditEvent("System", "Refreshed database tables manually from dashboard", "info");
             showToast('Refreshed database tables.');
         });
 
-        // Draw analytics chart using Chart.js
-        function buildAnalyticsChart(data) {
-            const ctx = document.getElementById('submissionsChart').getContext('2d');
+        // Export Responses to CSV Action
+        const exportCsvBtn = document.getElementById('export-csv-btn');
+        if (exportCsvBtn) {
+            exportCsvBtn.addEventListener('click', () => {
+                const dataToExport = useMockData ? mockSurveyResponses : lastFetchedSubmissions;
+                if (!dataToExport || dataToExport.length === 0) {
+                    alert('No survey submissions available to export.');
+                    return;
+                }
 
-            // Group by dates
-            const dateCounts = {};
-            data.forEach(item => {
-                const dateStr = new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-                dateCounts[dateStr] = (dateCounts[dateStr] || 0) + 1;
+                let csvContent = "ID,Timestamp,Q1: What we wish people understood about peer support,Q2: What helps teenagers reach out for support\n";
+
+                dataToExport.forEach(row => {
+                    const id = row.id;
+                    const timestamp = new Date(row.created_at).toISOString();
+                    const q1 = `"${(row.q1_answer || row.q1_response || '').replace(/"/g, '""')}"`;
+                    const q2 = `"${(row.q2_answer || row.q2_response || '').replace(/"/g, '""')}"`;
+                    csvContent += `${id},${timestamp},${q1},${q2}\n`;
+                });
+
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.setAttribute("href", url);
+                link.setAttribute("download", `lighthouse_survey_export_${new Date().toISOString().slice(0,10)}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                logAuditEvent("Moderation", `Exported ${dataToExport.length} survey responses to CSV`, "success");
+                showToast("Survey responses exported to CSV successfully.");
+            });
+        }
+
+        // Submissions & Views Chart Toggles
+        const btnChartSubmissions = document.getElementById('btn-chart-submissions');
+        const btnChartViews = document.getElementById('btn-chart-views');
+        const chartHeading = document.getElementById('chart-heading');
+
+        if (btnChartSubmissions && btnChartViews) {
+            btnChartSubmissions.addEventListener('click', () => {
+                currentChartType = 'submissions';
+                btnChartSubmissions.classList.remove('btn-secondary');
+                btnChartSubmissions.classList.add('btn-primary');
+                btnChartViews.classList.remove('btn-primary');
+                btnChartViews.classList.add('btn-secondary');
+                if (chartHeading) chartHeading.textContent = "Submissions Analytics";
+                buildAnalyticsChart();
             });
 
-            const labels = Object.keys(dateCounts).reverse();
-            const counts = Object.values(dateCounts).reverse();
+            btnChartViews.addEventListener('click', () => {
+                currentChartType = 'views';
+                btnChartViews.classList.remove('btn-secondary');
+                btnChartViews.classList.add('btn-primary');
+                btnChartSubmissions.classList.remove('btn-primary');
+                btnChartSubmissions.classList.add('btn-secondary');
+                if (chartHeading) chartHeading.textContent = "Page Views Analytics";
+                buildAnalyticsChart();
+            });
+        }
+
+        // Group timestamps utility
+        function getGroupedData(timestamps) {
+            const dateCounts = {};
+            timestamps.forEach(ts => {
+                const date = new Date(ts);
+                const dateStr = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+                dateCounts[dateStr] = (dateCounts[dateStr] || 0) + 1;
+            });
+            return dateCounts;
+        }
+
+        // Draw analytics chart using Chart.js
+        function buildAnalyticsChart() {
+            const chartCanvas = document.getElementById('submissionsChart');
+            if (!chartCanvas) return;
+            const ctx = chartCanvas.getContext('2d');
+
+            let labels = [];
+            let counts = [];
+            let labelText = '';
+            let borderColor = '#7E1E0E'; 
+            let backgroundColor = 'rgba(126, 30, 14, 0.08)';
+
+            if (currentChartType === 'submissions') {
+                const submissions = useMockData ? mockSurveyResponses : lastFetchedSubmissions;
+                const grouped = getGroupedData(submissions.map(s => s.created_at));
+                
+                // Sort dates chronologically
+                labels = Object.keys(grouped).sort((a, b) => new Date(a + ' 2026') - new Date(b + ' 2026'));
+                counts = labels.map(l => grouped[l]);
+                labelText = 'Survey Submissions';
+                borderColor = '#7E1E0E';
+                backgroundColor = 'rgba(126, 30, 14, 0.08)';
+            } else {
+                let viewHistory = localStorage.getItem('page-view-history');
+                viewHistory = viewHistory ? JSON.parse(viewHistory) : [];
+                
+                const grouped = getGroupedData(viewHistory);
+                labels = Object.keys(grouped).sort((a, b) => new Date(a + ' 2026') - new Date(b + ' 2026'));
+                counts = labels.map(l => grouped[l]);
+                labelText = 'Page Views';
+                borderColor = '#D65E43'; 
+                backgroundColor = 'rgba(214, 94, 67, 0.08)';
+            }
 
             if (submissionsChart) {
                 submissionsChart.destroy();
             }
 
-            // Chart styling using CSS variable equivalents
             submissionsChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels.length > 0 ? labels : ['Today'],
                     datasets: [{
-                        label: 'Survey Submissions',
+                        label: labelText,
                         data: counts.length > 0 ? counts : [0],
-                        borderColor: '#CD3E38', // Lighthouse Crimson Red
-                        backgroundColor: 'rgba(205, 62, 56, 0.1)',
+                        borderColor: borderColor,
+                        backgroundColor: backgroundColor,
                         borderWidth: 3,
                         tension: 0.35,
                         fill: true,
-                        pointBackgroundColor: '#CD3E38',
+                        pointBackgroundColor: borderColor,
                         pointBorderColor: '#FAF8F5',
-                        pointRadius: 6,
-                        pointHoverRadius: 8
+                        pointRadius: 5,
+                        pointHoverRadius: 7
                     }]
                 },
                 options: {
@@ -841,7 +1129,7 @@
                             },
                             ticks: {
                                 stepSize: 1,
-                                color: '#526071'
+                                color: '#8C7D73'
                             }
                         },
                         x: {
@@ -849,11 +1137,48 @@
                                 display: false
                             },
                             ticks: {
-                                color: '#526071'
+                                color: '#8C7D73'
                             }
                         }
                     }
                 }
+            });
+        }
+
+        // Live Moderation Table Search Filter
+        const surveySearchInput = document.getElementById('survey-search-input');
+        if (surveySearchInput) {
+            surveySearchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                const rows = document.querySelectorAll('#survey-table-body tr');
+                rows.forEach(row => {
+                    if (row.cells.length < 5) return; 
+                    const q1Text = row.cells[2].textContent.toLowerCase();
+                    const q2Text = row.cells[3].textContent.toLowerCase();
+                    if (q1Text.includes(query) || q2Text.includes(query)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // Live Resource List Search Filter
+        const resourceSearchInput = document.getElementById('resource-search-input');
+        if (resourceSearchInput) {
+            resourceSearchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                const items = document.querySelectorAll('#resource-directory-list .directory-item');
+                items.forEach(item => {
+                    const nameText = item.querySelector('.file-name').textContent.toLowerCase();
+                    const metaText = item.querySelector('.file-meta').textContent.toLowerCase();
+                    if (nameText.includes(query) || metaText.includes(query)) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
             });
         }
 
