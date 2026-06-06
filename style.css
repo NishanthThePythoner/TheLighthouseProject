@@ -6,44 +6,45 @@
 /* --- Design Tokens / CSS Variables --- */
 :root {
     /* ══════════════════════════════════════════════════
-       THE LIGHTHOUSE PROJECT — NEW OCEAN & LIGHTHOUSE PALETTE
+       THE LIGHTHOUSE PROJECT — RETRO WARM GRID PALETTE
        ══════════════════════════════════════════════════
        Calming and Empathetic Design:
-       - Calming Deep Ocean Navy   #1A2F45 (clr-light / primary)
-       - Light Ice Mist Blue       #EDF3F7 (clr-primary-light)
-       - Comforting Sand/Beige     #EBE4DA (clr-surface)
-       - Warm Cream Off-white      #FAF8F5 (clr-white)
-       - Midnight Ocean Navy Text  #111E2E (clr-secondary / clr-dark)
-       - Lighthouse Gold/Amber     #E5A93B (clr-accent / clr-glow)
-       - Soft Muted Slate Grey     #526071 (clr-muted)
+       - Warm Light Cream/Beige    #FAF6EB (clr-light)
+       - Soft Warm Sand            #F2EBE1 (clr-surface)
+       - Pure White                #FFFFFF (clr-white)
+       - Deep Brick Red/Maroon     #7E1E0E (clr-primary)
+       - Warm Terracotta/Coral     #D65E43 (clr-accent / clr-glow / clr-ember)
+       - Warm Chestnut Brown       #4A3C31 (clr-secondary / clr-dark)
+       - Soft Muted Taupe/Brown    #8C7D73 (clr-muted)
     */
 
-    /* Primary Accent Action: Vibrant Lighthouse Crimson Red (Hope & Guiding Beacon) */
-    --clr-primary:          #CD3E38;
-    --clr-primary-light:    #FDF2F2;   /* Soft warm rose/cream tint for badges/cards */
-    --clr-primary-dark:     #9B1C1C;   /* Deep crimson */
+    /* Primary Accent Action: Brand Deep Brick Red (Hope & Guiding Beacon) */
+    --clr-primary:          #7E1E0E;
+    --clr-primary-light:    #FAF3F0;   /* Soft warm rose/cream tint for badges/cards */
+    --clr-primary-dark:     #4D1007;   /* Deep brick red / maroon */
 
     /* Accent warm gold/amber tones (representing lighthouse beam, hope, warmth) */
-    --clr-ember:            #D97706;   /* Warm Lighthouse Amber */
-    --clr-ember-light:      #FEF3C7;   /* Soft warm amber glow tint */
-    --clr-choco:            #E5A93B;   /* Lighthouse Soft Gold */
-    --clr-choco-light:      #FAF8F5;   /* Warm cream */
+    --clr-ember:            #D65E43;   /* Terracotta Coral */
+    --clr-ember-light:      #FCEBE6;   /* Soft warm coral glow tint */
+    --clr-choco:            #D65E43;   /* Coral Accent */
+    --clr-choco-light:      #FAF6EB;   /* Warm cream */
 
-    /* Calming Balancing Blue: Navy - 10% Accent */
-    --clr-secondary:        #111E2E;   /* Calming Midnight Ocean Navy */
-    --clr-secondary-light:  #E8EEF5;   
+    /* Calming Balancing Color: Chestnut Brown */
+    --clr-secondary:        #4A3C31;   /* Warm Chestnut Brown */
+    --clr-secondary-light:  #F2EBE1;   /* Soft Sand */
 
     /* Base Palette Redesigned with the 60-30-10 Design Rule */
-    --clr-light:            #1A2F45;   /* Calming Deep Ocean Navy Background (60%) */
-    --clr-surface:          #EBE4DA;   /* Comforting Sand/Beige tone for card surfaces (30%) */
-    --clr-white:            #FAF8F5;   /* Warm cream off-white for cards/supporting sections (30%) */
-    --clr-dark:             #111E2E;   /* Midnight Navy text for high contrast inside cards (10%) */
-    --clr-muted:            #3F4E5F;   /* Darker slate-grey for sharp readability inside cards */
-    --clr-border:           #CBD5E1;   /* Muted slate border */
+    --clr-bg:               #FAF6EB;   /* Warm Light Cream Base Background */
+    --clr-light:            transparent; /* Allow body grid to show through */
+    --clr-surface:          #F2EBE1;   /* Comforting Sand/Beige tone for card surfaces (30%) */
+    --clr-white:            #FFFFFF;   /* Pure white for popping cards (30%) */
+    --clr-dark:             #4A3C31;   /* Warm Chestnut Brown text (10%) */
+    --clr-muted:            #8C7D73;   /* Soft Muted Taupe/Brown for subtext */
+    --clr-border:           #E1D9C8;   /* Warm beige border */
 
     /* Legacy glow — repurposed as soft gold warm accent */
-    --clr-glow:             #E5A93B;   /* Soft Gold */
-    --clr-glow-light:       #FFFBEB;   /* Pale gold tint */
+    --clr-glow:             #D65E43;   /* Warm Coral */
+    --clr-glow-light:       #FDF5F2;   /* Pale warm coral tint */
 
     /* Utility */
     --clr-error:            #DC2626;
@@ -60,122 +61,51 @@
     --border-radius-sm: 18px;
     --border-radius-md: 30px;
     --border-radius-lg: 42px;
-    --clr-accent:           #E5A93B;   /* Soft Gold */
-    --box-shadow-sm: 0 4px 12px rgba(17, 30, 46, 0.04);
-    --box-shadow-md: 0 12px 36px rgba(17, 30, 46, 0.08);
-    --box-shadow-lg: 0 24px 60px rgba(17, 30, 46, 0.12);
+    --clr-accent:           #D65E43;   /* Terracotta */
+    --box-shadow-sm: 0 4px 12px rgba(74, 60, 49, 0.04);
+    --box-shadow-md: 0 12px 36px rgba(74, 60, 49, 0.08);
+    --box-shadow-lg: 0 24px 60px rgba(74, 60, 49, 0.12);
+
+    /* Grid background helper variables */
+    --grid-color:           rgba(126, 30, 14, 0.055); /* faint red-brown grid lines */
+    --grid-line:            linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+                            linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+    --grid-size:            32px 32px;
 }
 
-/* Accessibility & Contrast: Ensure high-contrast cream/sand typography directly on dark red section backgrounds */
-body:not(.dark-mode) .hero-section,
-body:not(.dark-mode) .philosophy-section,
-body:not(.dark-mode) .simulator-section,
-body:not(.dark-mode) .quiz-section,
-body:not(.dark-mode) .contact-section {
-    color: #FAF5EE; /* Cream text */
-}
-
-body:not(.dark-mode) .hero-section .section-title,
-body:not(.dark-mode) .philosophy-section .section-title,
-body:not(.dark-mode) .simulator-section .section-title,
-body:not(.dark-mode) .quiz-section .section-title,
-body:not(.dark-mode) .contact-section .section-title,
-body:not(.dark-mode) .hero-section h1, body:not(.dark-mode) .hero-section h2, body:not(.dark-mode) .hero-section h3, body:not(.dark-mode) .hero-section h4,
-body:not(.dark-mode) .philosophy-section h1, body:not(.dark-mode) .philosophy-section h2, body:not(.dark-mode) .philosophy-section h3, body:not(.dark-mode) .philosophy-section h4,
-body:not(.dark-mode) .simulator-section h1, body:not(.dark-mode) .simulator-section h2, body:not(.dark-mode) .simulator-section h3, body:not(.dark-mode) .simulator-section h4,
-body:not(.dark-mode) .quiz-section h1, body:not(.dark-mode) .quiz-section h2, body:not(.dark-mode) .quiz-section h3, body:not(.dark-mode) .quiz-section h4,
-body:not(.dark-mode) .contact-section h1, body:not(.dark-mode) .contact-section h2, body:not(.dark-mode) .contact-section h3, body:not(.dark-mode) .contact-section h4,
-body:not(.dark-mode) .contact-section .contact-title {
-    color: #FAF5EE; /* Cream headings */
-}
-
-body:not(.dark-mode) .hero-section .section-desc,
-body:not(.dark-mode) .philosophy-section .section-desc,
-body:not(.dark-mode) .simulator-section .section-desc,
-body:not(.dark-mode) .quiz-section .section-desc,
-body:not(.dark-mode) .contact-section p,
-body:not(.dark-mode) .contact-section .contact-text,
-body:not(.dark-mode) .hero-section p,
-body:not(.dark-mode) .philosophy-section p,
-body:not(.dark-mode) .simulator-section p,
-body:not(.dark-mode) .quiz-section p {
-    color: #ECE0D1; /* Lighter sand paragraphs for enhanced contrast on deep navy */
-}
-
-/* Reset text contrast inside cards and interactive interfaces in light mode */
-body:not(.dark-mode) .perspective-card:not(.traditional-mode),
-body:not(.dark-mode) .level-card,
-body:not(.dark-mode) .simulator-container,
-body:not(.dark-mode) .quiz-card,
-body:not(.dark-mode) .contact-method-item {
-    color: var(--clr-dark);
-}
-
-body:not(.dark-mode) .perspective-card:not(.traditional-mode) h1,
-body:not(.dark-mode) .perspective-card:not(.traditional-mode) h2,
-body:not(.dark-mode) .perspective-card:not(.traditional-mode) h3,
-body:not(.dark-mode) .perspective-card:not(.traditional-mode) h4,
-body:not(.dark-mode) .level-card h1,
-body:not(.dark-mode) .level-card h2,
-body:not(.dark-mode) .level-card h3,
-body:not(.dark-mode) .level-card h4,
-body:not(.dark-mode) .simulator-container h1,
-body:not(.dark-mode) .simulator-container h2,
-body:not(.dark-mode) .simulator-container h3,
-body:not(.dark-mode) .simulator-container h4,
-body:not(.dark-mode) .quiz-card h1,
-body:not(.dark-mode) .quiz-card h2,
-body:not(.dark-mode) .quiz-card h3,
-body:not(.dark-mode) .quiz-card h4,
-body:not(.dark-mode) .contact-method-item h1,
-body:not(.dark-mode) .contact-method-item h2,
-body:not(.dark-mode) .contact-method-item h3,
-body:not(.dark-mode) .contact-method-item h4 {
-    color: var(--clr-dark);
-}
-
-body:not(.dark-mode) .perspective-card:not(.traditional-mode) p,
-body:not(.dark-mode) .level-card p,
-body:not(.dark-mode) .simulator-container p,
-body:not(.dark-mode) .quiz-card p,
-body:not(.dark-mode) .contact-method-item p,
-body:not(.dark-mode) .contact-method-item span {
-    color: var(--clr-muted);
-}
-
-/* Secondary Button styles specifically for Burgundy Red backgrounds in light mode */
-body:not(.dark-mode) .hero-section .btn-secondary,
-body:not(.dark-mode) .philosophy-section .btn-secondary,
-body:not(.dark-mode) .simulator-section .btn-secondary,
-body:not(.dark-mode) .quiz-section .btn-secondary,
-body:not(.dark-mode) .contact-section .btn-secondary {
-    color: #FAF5EE;
-    border-color: rgba(250, 245, 238, 0.4);
-}
-
-body:not(.dark-mode) .hero-section .btn-secondary:hover,
-body:not(.dark-mode) .philosophy-section .btn-secondary:hover,
-body:not(.dark-mode) .simulator-section .btn-secondary:hover,
-body:not(.dark-mode) .quiz-section .btn-secondary:hover,
-body:not(.dark-mode) .contact-section .btn-secondary:hover {
-    background-color: rgba(250, 245, 238, 0.1);
-    border-color: #FAF5EE;
-    color: #FAF5EE;
-}
+/* Accessibility & Contrast: Main light color scheme defaults */
 
 /* --- Dark Mode Variables Overrides --- */
 body.dark-mode {
-    --clr-light:            #090D16;   /* Deep Oceanic Midnight Black */
-    --clr-surface:          #162238;   /* Calming deep Ocean Slate surface */
-    --clr-dark:             #FAF8F5;   /* Warm off-white text */
-    --clr-white:            #121B2C;   /* Muted warm deep dark navy for cards */
-    --clr-border:           #243249;   /* Muted midnight-slate border */
-    --clr-muted:            #94A3B8;   /* Soft slate blue/grey subtext */
-    --clr-primary-light:    #162E44;   /* Dark navy hover overlay */
-    --clr-secondary-light:  #111E2E;   /* Midnight Ocean Navy overlay */
-    --clr-ember-light:      #1C2541;
-    --clr-choco-light:      #1F2E47;
-    background-color: var(--clr-light); /* Dark mode base background */
+    --clr-bg:               #161311;   /* Warm charcoal black/dark brown */
+    --clr-light:            #161311;   /* Warm charcoal black/dark brown background */
+    --clr-surface:          #24201E;   /* Warm dark brown surface for cards */
+    --clr-white:            #24201E;   /* Warm dark brown card background */
+    --clr-border:           #3C3430;   /* Muted brown/charcoal border */
+    --clr-dark:             #FAF6EB;   /* High contrast warm cream text */
+    --clr-muted:            #A4988F;   /* Soft warm muted taupe text */
+    
+    /* Vibrant coral/orange action color for dark mode (replaces dark brick red) */
+    --clr-primary:          #E87A5D;   /* Vibrant Coral Red (high contrast on dark) */
+    --clr-primary-light:    #351F1B;   /* Dark rose/terracotta tint for cards/badges */
+    --clr-primary-dark:     #FFA48B;   /* Very light coral hover */
+
+    /* Accent color */
+    --clr-ember:            #E87A5D;   
+    --clr-ember-light:      #351F1B;   
+    --clr-choco:            #E87A5D;   
+    --clr-choco-light:      #24201E;   /* Warm dark brown surface */
+
+    /* Secondary color: Cream/Beige */
+    --clr-secondary:        #FAF6EB;   
+    --clr-secondary-light:  #24201E;   
+
+    --clr-accent:           #E87A5D;   
+    --clr-glow:             #E87A5D;   
+    --clr-glow-light:       #3A2320;   
+
+    --grid-line:            none;      /* Disable grid in dark mode */
+    background-color: var(--clr-bg);   /* Dark mode base background */
 }
 
 /* Theme transition properties for global elements */
@@ -208,7 +138,9 @@ body {
     font-weight: 400;
     line-height: 1.78;          /* Increased line-height for breathability */
     color: var(--clr-dark);
-    background-color: var(--clr-white); /* Cream white base background */
+    background-color: var(--clr-bg); /* Cream base background */
+    background-image: var(--grid-line);
+    background-size: var(--grid-size);
     overflow-x: hidden;
 }
 
@@ -222,7 +154,7 @@ body {
 /* Typography elements */
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
-    color: var(--clr-dark);
+    color: var(--clr-primary);
     font-weight: 700;
     line-height: 1.25;
 }
@@ -334,31 +266,32 @@ textarea:focus-visible {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--clr-secondary), #0d131f);
-    color: #FAF5EE;
-    border: 2px solid var(--clr-secondary);
-    box-shadow: 0 4px 14px rgba(22, 31, 48, 0.35);
+    background: var(--clr-primary);
+    color: var(--clr-bg);
+    border: 2px solid var(--clr-primary);
+    box-shadow: 0 4px 14px rgba(126, 30, 14, 0.15);
 }
 
 .btn-primary:hover {
-    background: #0d131f;
-    border-color: #0d131f;
+    background: var(--clr-primary-dark);
+    border-color: var(--clr-primary-dark);
     transform: translateY(-3px);
-    box-shadow: 0 10px 24px rgba(22, 31, 48, 0.5);
+    box-shadow: 0 10px 24px rgba(126, 30, 14, 0.25);
 }
 
 .btn-secondary {
     background-color: transparent;
-    color: var(--clr-dark);
-    border-color: var(--clr-border);
+    color: var(--clr-primary);
+    border-color: var(--clr-primary);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
 .btn-secondary:hover {
-    background-color: var(--clr-white);
-    border-color: var(--clr-dark);
+    background-color: var(--clr-primary);
+    color: var(--clr-bg);
+    border-color: var(--clr-primary);
     transform: translateY(-3px);
-    box-shadow: 0 10px 24px rgba(57, 0, 7, 0.10);
+    box-shadow: 0 10px 24px rgba(126, 30, 14, 0.15);
 }
 
 .btn-accent {
@@ -2200,7 +2133,7 @@ body.dark-mode .insight-title {
 }
 
 body.dark-mode .completion-stat {
-    background-color: #121B2C;
+    background-color: var(--clr-choco-light);
     border-color: rgba(255, 255, 255, 0.08);
 }
 
@@ -2390,7 +2323,7 @@ body.dark-mode .completion-stat-val {
 }
 
 body.dark-mode .answer-btn {
-    background-color: #121B2C;
+    background-color: var(--clr-choco-light);
     color: var(--clr-dark);
     border-color: rgba(255, 255, 255, 0.08);
 }
@@ -2404,7 +2337,7 @@ body.dark-mode .answer-btn {
 }
 
 body.dark-mode .answer-btn:hover {
-    background-color: rgba(205, 62, 56, 0.2);
+    background-color: rgba(232, 122, 93, 0.2);
     color: var(--clr-dark);
     border-color: var(--clr-primary);
 }
@@ -2650,7 +2583,7 @@ body.dark-mode .answer-btn:hover {
 body.dark-mode .form-group input,
 body.dark-mode .form-group select,
 body.dark-mode .form-group textarea {
-    background-color: #121B2C;
+    background-color: var(--clr-choco-light);
     color: var(--clr-dark);
     border-color: rgba(255, 255, 255, 0.08);
 }
@@ -2672,7 +2605,7 @@ body.dark-mode .form-group textarea {
 body.dark-mode .form-group input:focus,
 body.dark-mode .form-group select:focus,
 body.dark-mode .form-group textarea:focus {
-    background-color: #1A263B;
+    background-color: var(--clr-white);
     border-color: var(--clr-primary);
 }
 
@@ -2709,7 +2642,7 @@ body.dark-mode .form-group textarea:focus {
 
 .footer-grid {
     display: grid;
-    grid-template-columns: 1.2fr 0.8fr 1fr;
+    grid-template-columns: 1.5fr 1fr;
     gap: 64px;
     margin-bottom: 56px;
 }
@@ -2760,8 +2693,7 @@ body.dark-mode .form-group textarea:focus {
     margin: 0;
 }
 
-.footer-links-col h4,
-.footer-newsletter-col h4 {
+.footer-links-col h4 {
     font-family: var(--font-body);
     font-size: 0.9rem;
     font-weight: 700;
@@ -2785,49 +2717,6 @@ body.dark-mode .form-group textarea:focus {
 .footer-links a:hover {
     color: var(--clr-white);
     transform: translateX(2px);
-}
-
-/* Newsletter Signup Widget */
-.footer-newsletter-col p {
-    font-size: 0.85rem;
-    line-height: 1.5;
-    color: rgba(255, 255, 255, 0.5);
-    margin-bottom: 20px;
-}
-
-.newsletter-form {
-    display: flex;
-    gap: 8px;
-}
-
-.newsletter-form input {
-    flex-grow: 1;
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1.5px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--border-radius-sm);
-    padding: 10px 16px;
-    color: #FAF5EE;
-    font-family: var(--font-body);
-    font-size: 0.9rem;
-    transition: all var(--transition-fast);
-}
-
-.newsletter-form input:focus {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: var(--clr-primary);
-    outline: none;
-}
-
-.newsletter-form .btn-accent {
-    padding: 0 16px;
-}
-
-.newsletter-error {
-    display: block;
-    font-size: 0.75rem;
-    color: var(--clr-primary);
-    margin-top: 6px;
-    height: 16px;
 }
 
 /* Footer Bottom bar details */
@@ -3278,8 +3167,8 @@ body.dark-mode .val-combo {
 }
 
 body.dark-mode .mobile-mock-card {
-    background-color: #121B2C;
-    border-color: #243249;
+    background-color: var(--clr-choco-light);
+    border-color: var(--clr-border);
 }
 
 .mobile-mock-header {
@@ -3293,8 +3182,8 @@ body.dark-mode .mobile-mock-card {
 }
 
 body.dark-mode .mobile-mock-header {
-    background-color: #1A263B;
-    border-bottom-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--clr-white);
+    border-bottom-color: var(--clr-border);
 }
 
 .mobile-mock-user {
@@ -3320,10 +3209,6 @@ body.dark-mode .mobile-mock-header {
     color: var(--clr-dark);
 }
 
-body.dark-mode .mobile-mock-name {
-    color: var(--clr-white);
-}
-
 .mobile-mock-status {
     font-size: 0.68rem;
     color: var(--clr-success);
@@ -3347,7 +3232,7 @@ body.dark-mode .mobile-mock-name {
 }
 
 body.dark-mode .mobile-mock-chat-log {
-    background-color: #121B2C;
+    background-color: var(--clr-choco-light);
 }
 
 /* Chat bubble overrides for support meter */
@@ -3369,9 +3254,9 @@ body.dark-mode .mobile-mock-chat-log {
 }
 
 body.dark-mode .sm-bubble.peer {
-    background-color: #1A263B;
-    color: var(--clr-white);
-    border-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--clr-white);
+    color: var(--clr-dark);
+    border-color: var(--clr-border);
 }
 
 .sm-bubble.user {
@@ -3405,8 +3290,8 @@ body.dark-mode .sm-bubble.peer {
 }
 
 body.dark-mode .sm-social-post {
-    background-color: #1A263B;
-    border-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--clr-white);
+    border-color: var(--clr-border);
 }
 
 .sm-post-header {
@@ -3481,8 +3366,8 @@ body.dark-mode .sm-post-footer {
 }
 
 body.dark-mode .sm-choices-card {
-    background-color: #1A263B;
-    border-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--clr-white);
+    border-color: var(--clr-border);
 }
 
 .interaction-label {
@@ -3516,9 +3401,9 @@ body.dark-mode .sm-choices-card {
 }
 
 body.dark-mode .choice-btn {
-    background-color: #121B2C;
-    border-color: rgba(255, 255, 255, 0.08);
-    color: var(--clr-white);
+    background-color: var(--clr-choco-light);
+    border-color: var(--clr-border);
+    color: var(--clr-dark);
 }
 
 .choice-btn:hover {
@@ -3528,7 +3413,8 @@ body.dark-mode .choice-btn {
 }
 
 body.dark-mode .choice-btn:hover {
-    background-color: rgba(205, 62, 56, 0.15);
+    background-color: rgba(232, 122, 93, 0.15);
+    border-color: var(--clr-primary);
 }
 
 .choice-btn:disabled {
@@ -3548,8 +3434,8 @@ body.dark-mode .choice-btn:hover {
 }
 
 body.dark-mode .sm-reveal-card {
-    background-color: #1A263B;
-    border-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--clr-white);
+    border-color: var(--clr-border);
 }
 
 /* SVG meter center styles */
@@ -3643,7 +3529,7 @@ body.dark-mode .reflection-sec-title {
 }
 
 body.dark-mode .reflection-block {
-    background-color: #121B2C;
+    background-color: var(--clr-choco-light);
 }
 
 .reflection-block.good {
@@ -3938,7 +3824,7 @@ body.dark-mode .survey-card {
 }
 
 body.dark-mode .survey-card textarea {
-    background-color: #121B2C;
+    background-color: var(--clr-choco-light);
     border-color: rgba(255, 255, 255, 0.08);
     color: var(--clr-dark);
 }
@@ -3953,10 +3839,6 @@ body.dark-mode .survey-card textarea {
     background-color: var(--clr-light);
     border-top: 1px solid var(--clr-border);
     border-bottom: 1px solid var(--clr-border);
-}
-
-body.dark-mode .contact-section {
-    background-color: #121B2C;
 }
 
 .contact-box {
@@ -4048,17 +3930,8 @@ body.dark-mode .contact-method-item {
 
 /* Universal Dark Mode Section Rule */
 body.dark-mode section {
-    background-color: var(--clr-light);
+    background-color: var(--clr-bg);
     color: var(--clr-dark);
-}
-body.dark-mode section h1,
-body.dark-mode section h2,
-body.dark-mode section h3,
-body.dark-mode section h4,
-body.dark-mode section p,
-body.dark-mode section span,
-body.dark-mode section li {
-    color: inherit;
 }
 
 /* ==========================================================================
@@ -4068,88 +3941,6 @@ body.dark-mode section li {
     padding: 100px 0;
     background-color: var(--clr-white);
     border-bottom: 1px solid var(--clr-border);
-}
-
-.instagram-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    margin-top: 40px;
-}
-
-.instagram-card {
-    position: relative;
-    border-radius: var(--border-radius-md);
-    overflow: hidden;
-    box-shadow: var(--box-shadow-sm);
-    border: 1px solid var(--clr-border);
-    background-color: var(--clr-white);
-    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-}
-
-.instagram-card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--box-shadow-md);
-}
-
-.instagram-img-wrapper {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    position: relative;
-    overflow: hidden;
-}
-
-.instagram-img-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform var(--transition-smooth);
-}
-
-.instagram-card:hover .instagram-img-wrapper img {
-    transform: scale(1.08);
-}
-
-.instagram-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(17, 30, 46, 0.85); /* Calm Navy overlay */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    opacity: 0;
-    transition: opacity var(--transition-normal);
-}
-
-.instagram-card:hover .instagram-overlay {
-    opacity: 1;
-}
-
-.instagram-overlay-icon {
-    color: #FAF8F5;
-    font-size: 1.1rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-@media (max-width: 900px) {
-    .instagram-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-    }
-}
-
-@media (max-width: 480px) {
-    .instagram-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
 }
 
 /* ==========================================================================

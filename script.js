@@ -1458,38 +1458,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    /* ==========================================================================
-       7. NEWSLETTER EMAIL SIGNUP VALIDATION
-       ========================================================================== */
-    const newsletterForm = document.getElementById('newsletter-form');
-    const newsletterEmail = document.getElementById('newsletter-email');
-    const newsletterError = document.getElementById('newsletter-error');
-
-    if (newsletterForm) {
-        newsletterForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            const emailValue = newsletterEmail.value.trim();
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-            if (emailValue === '') {
-                newsletterError.style.color = 'var(--clr-primary)';
-                newsletterError.textContent = 'Please enter an email address';
-            } else if (!emailRegex.test(emailValue)) {
-                newsletterError.style.color = 'var(--clr-primary)';
-                newsletterError.textContent = 'Invalid email address formatting';
-            } else {
-                // Success Toast
-                newsletterError.style.color = 'var(--clr-glow)';
-                newsletterError.textContent = 'Successfully subscribed! Thank you.';
-                newsletterEmail.value = '';
-
-                setTimeout(() => {
-                    newsletterError.textContent = '';
-                }, 5000);
-            }
-        });
-    }
 
     /* ==========================================================================
        8. SCROLL REVEAL ANIMATIONS (INTERSECTION OBSERVER)
