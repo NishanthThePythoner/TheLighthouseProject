@@ -89,6 +89,7 @@
             <aside class="admin-sidebar">
                 <nav class="admin-nav-menu">
                     <a href="#stats-anchor" class="admin-nav-item active" id="menu-stats">📊 Dashboard Summary</a>
+                    <a href="#metrics-anchor" class="admin-nav-item" id="menu-metrics">📈 Edit Website Metrics</a>
                     <a href="#responses-anchor" class="admin-nav-item" id="menu-responses">💬 Survey Moderation</a>
                     <a href="#resources-anchor" class="admin-nav-item" id="menu-resources">📂 Upload Resources</a>
                 </nav>
@@ -135,6 +136,78 @@
                         <div class="chart-canvas-container">
                             <canvas id="submissionsChart"></canvas>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Section 1.5: Website Metrics Editor -->
+                <div id="metrics-section-wrapper" class="dashboard-section-block">
+                    <h2 class="admin-section-heading" id="metrics-anchor">Website Metrics Editor</h2>
+                    <div class="admin-upload-card card-content">
+                        <h3>Edit Stats Bar</h3>
+                        <p class="section-subtitle-desc" style="margin-bottom: 24px;">
+                            Configure the 4 statistics and description labels displayed on the website home page.
+                        </p>
+
+                        <form id="edit-metrics-form" class="admin-form">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 24px;">
+                                <!-- Metric 1 -->
+                                <div style="border: 1px solid var(--clr-border); padding: 16px; border-radius: var(--border-radius-md); background: var(--clr-choco-light);">
+                                    <h4 style="margin-bottom: 12px; color: var(--clr-primary); font-size: 0.9rem;">Statistic Card 1</h4>
+                                    <div class="form-group" style="margin-bottom: 12px;">
+                                        <label for="input-metric-num-1">Value (e.g., 90%)</label>
+                                        <input type="text" id="input-metric-num-1" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="input-metric-lbl-1">Label / Description</label>
+                                        <input type="text" id="input-metric-lbl-1" required>
+                                    </div>
+                                </div>
+
+                                <!-- Metric 2 -->
+                                <div style="border: 1px solid var(--clr-border); padding: 16px; border-radius: var(--border-radius-md); background: var(--clr-choco-light);">
+                                    <h4 style="margin-bottom: 12px; color: var(--clr-primary); font-size: 0.9rem;">Statistic Card 2</h4>
+                                    <div class="form-group" style="margin-bottom: 12px;">
+                                        <label for="input-metric-num-2">Value (e.g., 3x)</label>
+                                        <input type="text" id="input-metric-num-2" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="input-metric-lbl-2">Label / Description</label>
+                                        <input type="text" id="input-metric-lbl-2" required>
+                                    </div>
+                                </div>
+
+                                <!-- Metric 3 -->
+                                <div style="border: 1px solid var(--clr-border); padding: 16px; border-radius: var(--border-radius-md); background: var(--clr-choco-light);">
+                                    <h4 style="margin-bottom: 12px; color: var(--clr-primary); font-size: 0.9rem;">Statistic Card 3</h4>
+                                    <div class="form-group" style="margin-bottom: 12px;">
+                                        <label for="input-metric-num-3">Value (e.g., 0)</label>
+                                        <input type="text" id="input-metric-num-3" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="input-metric-lbl-3">Label / Description</label>
+                                        <input type="text" id="input-metric-lbl-3" required>
+                                    </div>
+                                </div>
+
+                                <!-- Metric 4 -->
+                                <div style="border: 1px solid var(--clr-border); padding: 16px; border-radius: var(--border-radius-md); background: var(--clr-choco-light);">
+                                    <h4 style="margin-bottom: 12px; color: var(--clr-primary); font-size: 0.9rem;">Statistic Card 4</h4>
+                                    <div class="form-group" style="margin-bottom: 12px;">
+                                        <label for="input-metric-num-4">Value (e.g., 300+)</label>
+                                        <input type="text" id="input-metric-num-4" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="input-metric-lbl-4">Label / Description</label>
+                                        <input type="text" id="input-metric-lbl-4" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; gap: 12px;">
+                                <button type="submit" class="btn btn-primary" id="save-metrics-btn">Save Changes</button>
+                                <button type="button" class="btn btn-secondary" id="reset-metrics-btn">Reset Defaults</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
