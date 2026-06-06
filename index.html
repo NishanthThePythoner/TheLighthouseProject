@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Lighthouse Project | Empathetic Youth Peer Support</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="The Lighthouse Project equips teenagers with emotional awareness and peer-support skills to recognize distress in friends and offer meaningful guidance before professional help is needed.">
+    <meta name="keywords" content="youth mental health, peer support, teen emotional support, teenage peer community, emotional first aid, supporting not solving, mental health NGO">
+    <meta name="author" content="The Lighthouse Project">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="The Lighthouse Project | Teen Peer Support NGO">
+    <meta property="og:description" content="We equip teenagers with emotional awareness and skills to recognize distress in peers and build supportive communities.">
+    <meta property="og:image" content="./Logo.jpeg">
+    <meta property="og:url" content="https://www.lighthouseproject.org">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="The Lighthouse Project | Teen Peer Support NGO">
+    <meta name="twitter:description" content="Equipping teenagers with emotional awareness and skills to recognize distress in peers.">
+    <meta name="twitter:image" content="./Logo.jpeg">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Supabase client JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- JSON-LD Structured Data Markup (SEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NGO",
+      "name": "The Lighthouse Project",
+      "alternateName": "The Lighthouse Project NGO",
+      "url": "https://www.lighthouseproject.org",
+      "logo": "https://www.lighthouseproject.org/Logo.jpeg",
+      "slogan": "Support, not solve.",
+      "description": "Equipping teenagers with the awareness skills to recognise when their peers are struggling emotionally and provide them with guidance on right ways to approach and manage such situations.",
+      "knowsAbout": ["Teen Mental Health", "Emotional First Aid", "Peer Support", "Youth Empowerment"],
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "India"
+      }
+    }
+    </script>
+</head>
+<body>
+
+    <!-- Scroll Indicator -->
+    <div id="scroll-progress" class="scroll-progress-bar" aria-hidden="true"></div>
+
+    <!-- Navigation Header -->
+    <header class="main-header" id="main-header">
+        <div class="container header-container">
+            <a href="#home" class="logo-link" aria-label="The Lighthouse Project homepage">
+                <img src="./Logo.jpeg" alt="The Lighthouse Project Watercolor Logo" class="brand-logo" id="brand-logo">
+                <span class="logo-text">The Lighthouse <span class="accent-text">Project</span></span>
+            </a>
+            
+            <!-- Desktop Navigation -->
+            <nav class="desktop-nav" aria-label="Main Navigation">
+                <ul class="nav-list">
+                    <li><a href="#home" class="nav-link active">Home</a></li>
+                    <li><a href="#pillars" class="nav-link">Core Pillars</a></li>
+                    <li><a href="#philosophy" class="nav-link">Our Philosophy</a></li>
+                    <li><a href="#simulator" class="nav-link">What They Really Heard</a></li>
+                    <li><a href="#support-meter" class="nav-link">The Support Meter</a></li>
+                    <li><a href="#quiz" class="nav-link">Lighthouse Quiz</a></li>
+                    <li><a href="#share-thoughts" class="nav-link">Share Your Thoughts</a></li>
+                </ul>
+            </nav>
+
+            <div class="nav-actions">
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle dark mode" aria-live="polite">
+                    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <a href="#share-thoughts" class="btn btn-primary btn-sm" id="nav-cta-btn">Share Your Thoughts</a>
+                <!-- Mobile Navigation Toggle -->
+                <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-expanded="false" aria-controls="mobile-nav-menu" aria-label="Toggle navigation menu">
+                    <span class="hamburger-bar"></span>
+                    <span class="hamburger-bar"></span>
+                    <span class="hamburger-bar"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Drawer Menu -->
+    <div class="mobile-nav-menu" id="mobile-nav-menu" aria-hidden="true">
+        <nav aria-label="Mobile Navigation">
+            <ul class="mobile-nav-list">
+                <li><a href="#home" class="mobile-nav-link">Home</a></li>
+                <li><a href="#pillars" class="mobile-nav-link">Core Pillars</a></li>
+                <li><a href="#philosophy" class="mobile-nav-link">Our Philosophy</a></li>
+                <li><a href="#simulator" class="mobile-nav-link">What They Really Heard</a></li>
+                <li><a href="#support-meter" class="mobile-nav-link">The Support Meter</a></li>
+                <li><a href="#quiz" class="mobile-nav-link">Lighthouse Quiz</a></li>
+                <li><a href="#share-thoughts" class="mobile-nav-link">Share Your Thoughts</a></li>
+                <li class="mobile-theme-toggle-container">
+                    <button id="theme-toggle-mobile" class="theme-toggle-btn mobile-theme-btn" aria-label="Toggle dark mode">
+                        <span class="theme-label-mobile">Dark Mode</span>
+                        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+                            <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </li>
+                <li class="mobile-nav-btn"><a href="#share-thoughts" class="btn btn-primary">Share Your Thoughts</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <main>
+        
+        <!-- Hero Section -->
+        <section class="hero-section" id="home">
+            <!-- Premium Background Ambient Blobs -->
+            <div class="ambient-blob ambient-blob-1" aria-hidden="true"></div>
+            <div class="ambient-blob ambient-blob-2" aria-hidden="true"></div>
+            <div class="ambient-blob ambient-blob-3" aria-hidden="true"></div>
+            <div class="hero-beacon-effect" aria-hidden="true"></div>
+            
+            <div class="container hero-container">
+                <div class="hero-header reveal">
+                    <h1 class="hero-title">The Lighthouse Project</h1>
+                    <p class="hero-tagline">Helping people find their way back</p>
+                </div>
+                
+                <div class="hero-body-grid">
+                    <div class="hero-content reveal">
+                        <p class="hero-motto">Support, <span class="highlight-serif">not solve.</span></p>
+                        <p class="hero-subtitle">
+                            The first support system for a teenager in distress is rarely a therapist or a "trusted adult"—it is their friends. We train youth to be the compassionate, non-judgmental guideposts their peers need.
+                        </p>
+                        <div class="hero-actions">
+                            <a href="#simulator" class="btn btn-primary" id="hero-primary-cta">Try Interactive Story</a>
+                            <a href="#philosophy" class="btn btn-secondary" id="hero-secondary-cta">Explore our belief</a>
+                        </div>
+                    </div>
+                    <div class="hero-media reveal">
+                        <div class="hero-image-wrapper">
+                            <div class="hero-image-ring" aria-hidden="true"></div>
+                            <img src="./Logo.jpeg" alt="The Lighthouse Project Handpainted Artwork" class="hero-artwork">
+                            <div class="lighthouse-beam" id="lighthouse-beam"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reality Metrics Bar (Air Center Inspired) -->
+        <section class="metrics-bar-section reveal" aria-label="Key peer support statistics">
+            <div class="container">
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <span class="metric-number">90%</span>
+                        <h3 class="metric-label">Teens turn to friends first in crisis</h3>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-number">3x</span>
+                        <h3 class="metric-label">More likely to share with a peer</h3>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-number">0</span>
+                        <h3 class="metric-label">Clinical labeling or diagnoses</h3>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-number">300+</span>
+                        <h3 class="metric-label">Support circles nationwide</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core Pillars Section -->
+        <section class="pillars-section" id="pillars">
+            <div class="container">
+                <div class="section-header text-center reveal">
+                    <span class="badge section-badge">Core Pillars</span>
+                    <h2 class="section-title">The Three Pillars of Peer Support</h2>
+                    <p class="section-desc">
+                        We teach a simple, three-step action framework designed specifically for real-world teenage behaviors and scenarios.
+                    </p>
+                </div>
+
+                <div class="pillars-grid reveal">
+                    <!-- Pillar 1 -->
+                    <div class="pillar-card">
+                        <div class="pillar-icon-wrapper">
+                            <!-- Custom SVG for Recognize -->
+                            <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3 class="pillar-title">1. Recognise</h3>
+                        <p class="pillar-text">
+                            Spot the subtle signals of distress in friends. Understand changes in daily behaviors, withdrawal, altered communication patterns, and online activity before things escalate.
+                        </p>
+                        <ul class="pillar-bullets">
+                            <li>Drastic changes in regular routines</li>
+                            <li>Uncharacteristic social media posts</li>
+                            <li>Prolonged withdrawal from friend circles</li>
+                        </ul>
+                    </div>
+
+                    <!-- Pillar 2 -->
+                    <div class="pillar-card">
+                        <div class="pillar-icon-wrapper">
+                            <!-- Custom SVG for Approach -->
+                            <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path d="M12 20h.01M7 20h.01M17 20h.01M8 16h8a2 2 0 002-2V6a2 2 0 00-2-2H8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3 class="pillar-title">2. Approach</h3>
+                        <p class="pillar-text">
+                            Start low-pressure, supportive conversations. Learn what to say, how to establish a safe space without judging or lecturing, and how to maintain presence when things are awkward.
+                        </p>
+                        <ul class="pillar-bullets">
+                            <li>Using non-threatening observations</li>
+                            <li>Creating zero-pressure listening spaces</li>
+                            <li>Expressing care without force-diagnosing</li>
+                        </ul>
+                    </div>
+
+                    <!-- Pillar 3 -->
+                    <div class="pillar-card">
+                        <div class="pillar-icon-wrapper">
+                            <!-- Custom SVG for Guide -->
+                            <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3 class="pillar-title">3. Guide</h3>
+                        <p class="pillar-text">
+                            Help friends connect to appropriate support without taking on the role of a clinical professional. Know your personal boundaries, and safely guide friends toward experts.
+                        </p>
+                        <ul class="pillar-bullets">
+                            <li>Understanding the limit of peer aid</li>
+                            <li>Identifying warm transitions to professionals</li>
+                            <li>Safely handling emergency escalations</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Philosophy (Perspective Shift Section) -->
+        <section class="philosophy-section" id="philosophy">
+            <div class="container">
+                <div class="section-header text-center reveal">
+                    <span class="badge section-badge">Our Belief</span>
+                    <h2 class="section-title">A Different Direction for Youth Mental Health</h2>
+                    <p class="section-desc text-center">
+                        Traditional approaches put the absolute weight of reaching out entirely on the individual already struggling, often categorization-first. The Lighthouse Project focuses on preparing the friends around them.
+                    </p>
+                </div>
+
+                <!-- Perspective Shift Toggle Interaction -->
+                <div class="perspective-toggle-container">
+                    <span class="toggle-label" id="label-traditional">Traditional Approach</span>
+                    <button class="perspective-toggle-btn switched" id="perspective-toggle-btn" aria-checked="true" role="switch" aria-label="Toggle between Traditional Mental Health awareness and The Lighthouse Project model">
+                        <span class="perspective-toggle-dot"></span>
+                    </button>
+                    <span class="toggle-label active" id="label-lighthouse">The Lighthouse Way</span>
+                </div>
+
+                <div class="perspective-card-wrapper reveal">
+                    <!-- Dynamic perspective cards populated and controlled by script.js -->
+                    <div class="perspective-card" id="perspective-card">
+                        <div class="card-column left-col">
+                            <h3 class="card-subtitle-sub" id="perspective-subtitle">The Lighthouse Model</h3>
+                            <h4 class="card-title-lg" id="perspective-title">Empowering the surrounding peer community</h4>
+                            <p class="card-text" id="perspective-body">
+                                Instead of expecting a struggling teenager to seek out institutional support on their own, we equip friends with the confidence, active listening skills, and boundary-awareness to step in and offer immediate emotional first-aid.
+                            </p>
+                            <ul class="card-list" id="perspective-list">
+                                <li>Focuses on training the peers who are already around them.</li>
+                                <li>Replaces immediate categorization with patient, active presence.</li>
+                                <li>Prepares teens to connect friends to professional help safely.</li>
+                            </ul>
+                        </div>
+                        <div class="card-column right-col visual-col" id="perspective-visual-container">
+                            <div class="visual-circle-network">
+                                <div class="node center-node distress" id="vis-center">Peer in Distress</div>
+                                <div class="node friend-node connected" id="vis-f1">Friend A</div>
+                                <div class="node friend-node connected" id="vis-f2">Friend B</div>
+                                <div class="node friend-node connected" id="vis-f3">Friend C</div>
+                                <div class="beacon-pulse" id="vis-pulse"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Peer Support Simulator Section (What They Really Heard) -->
+        <section class="simulator-section" id="simulator">
+            <div class="container">
+                <div class="section-header text-center reveal">
+                    <span class="badge section-badge">Interactive Story</span>
+                    <h2 class="section-title">What They Really Heard</h2>
+                    <p class="section-desc">
+                        Every response carries an intention. Explore how your words can land differently depending on a friend's emotional state, and learn to navigate the nuance of support.
+                    </p>
+                </div>
+
+                <!-- Level Selection Screen -->
+                <div class="level-selection-container reveal" id="level-selection-screen">
+                    <h3 class="level-selection-title">Select a Difficulty Level</h3>
+                    <p class="level-selection-subtitle">Each level introduces more complex emotional situations and communication dynamics.</p>
+                    
+                    <div class="levels-grid">
+                        <!-- Level 1 -->
+                        <button class="level-card" data-level="1">
+                            <div class="level-badge">Level 1</div>
+                            <h4 class="level-card-title">Exam Overwhelm</h4>
+                            <p class="level-card-desc">Your friend Aarav is quiet and skipping cricket practice. Learn the basics of open vs. closed responses.</p>
+                            <span class="level-card-meta">Aarav • Classroom Friend</span>
+                            <div class="level-card-arrow">Start Level &rarr;</div>
+                        </button>
+                        
+                        <!-- Level 2 -->
+                        <button class="level-card" data-level="2">
+                            <div class="level-badge">Level 2</div>
+                            <h4 class="level-card-title">Repeatedly Flaking</h4>
+                            <p class="level-card-desc">Riya cancels plans again last-minute. Recognize the shift in meaning when repeating a suggestion.</p>
+                            <span class="level-card-meta">Riya • Close Group Friend</span>
+                            <div class="level-card-arrow">Start Level &rarr;</div>
+                        </button>
+
+                        <!-- Level 3 -->
+                        <button class="level-card" data-level="3">
+                            <div class="level-badge">Level 3</div>
+                            <h4 class="level-card-title">Self-Deprecating Humor</h4>
+                            <p class="level-card-desc">Kavya failed to make the debate team and jokes about herself. Uncover hidden pain behind memes.</p>
+                            <span class="level-card-meta">Kavya • Study Partner</span>
+                            <div class="level-card-arrow">Start Level &rarr;</div>
+                        </button>
+
+                        <!-- Level 4 -->
+                        <button class="level-card" data-level="4">
+                            <div class="level-badge">Level 4</div>
+                            <h4 class="level-card-title">Group Chat Exclusion</h4>
+                            <p class="level-card-desc">Group chat tension after a hangout. Navigate multiple perspectives and complex group dynamics.</p>
+                            <span class="level-card-meta">Dev & Rohan • Childhood Friends</span>
+                            <div class="level-card-arrow">Start Level &rarr;</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simulation Active Workspace (Hidden by default) -->
+                <div class="simulator-container reveal" id="wtrh-workspace" style="display: none;">
+                    
+                    <!-- Left Sidebar: Story Context & Impact Meters -->
+                    <div class="simulator-sidebar">
+                        <button id="back-to-levels-btn" class="back-btn" aria-label="Go back to level selection">
+                            &larr; Exit Level
+                        </button>
+                        
+                        <div class="scenario-details">
+                            <div class="scenario-avatar-container">
+                                <span class="scenario-avatar" id="active-friend-avatar" aria-hidden="true">👤</span>
+                            </div>
+                            <div>
+                                <h4 class="scenario-name" id="active-friend-name">Friend Name</h4>
+                                <p class="scenario-meta" id="active-friend-relationship">Relationship Context</p>
+                            </div>
+                        </div>
+
+                        <!-- Story Context Card -->
+                        <div class="wtrh-story-card">
+                            <h5 class="wtrh-card-title">Story Background</h5>
+                            <p class="scenario-desc-short" id="active-scenario-desc">Scenario background details...</p>
+                        </div>
+
+                        <!-- Emotional Impact Meters -->
+                        <div class="meters-container">
+                            <h5 class="meters-title">Emotional Impact</h5>
+                            <p class="meters-subtitle">Dynamic tracking of your communication style.</p>
+                            
+                            <!-- Listening -->
+                            <div class="meter-item-wrapper">
+                                <div class="meter-labels">
+                                    <span>👂 Listening</span>
+                                </div>
+                                <div class="meter-bar">
+                                    <div class="meter-bar-fill" id="meter-listening" style="width: 50%;"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Curiosity -->
+                            <div class="meter-item-wrapper">
+                                <div class="meter-labels">
+                                    <span>🔍 Curiosity</span>
+                                </div>
+                                <div class="meter-bar">
+                                    <div class="meter-bar-fill" id="meter-curiosity" style="width: 50%;"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Validation -->
+                            <div class="meter-item-wrapper">
+                                <div class="meter-labels">
+                                    <span>🤝 Validation</span>
+                                </div>
+                                <div class="meter-bar">
+                                    <div class="meter-bar-fill" id="meter-validation" style="width: 50%;"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Empathy -->
+                            <div class="meter-item-wrapper">
+                                <div class="meter-labels">
+                                    <span>❤️ Empathy</span>
+                                </div>
+                                <div class="meter-bar">
+                                    <div class="meter-bar-fill" id="meter-empathy" style="width: 50%;"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Problem Solving -->
+                            <div class="meter-item-wrapper">
+                                <div class="meter-labels">
+                                    <span>🔧 Problem Solving</span>
+                                </div>
+                                <div class="meter-bar">
+                                    <div class="meter-bar-fill" id="meter-problem-solving" style="width: 50%;"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Assumptions -->
+                            <div class="meter-item-wrapper">
+                                <div class="meter-labels">
+                                    <span>💭 Assumptions</span>
+                                </div>
+                                <div class="meter-bar">
+                                    <div class="meter-bar-fill" id="meter-assumptions" style="width: 50%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Interactive Chat Interface -->
+                    <div class="simulator-chat-area">
+                        <!-- Chat header -->
+                        <div class="chat-header">
+                            <div class="chat-status">
+                                <span class="status-dot" id="active-status-dot"></span>
+                                <span id="chat-header-title">Chatting with Aarav</span>
+                            </div>
+                            <span class="chat-device-tag">Mobile App</span>
+                        </div>
+
+                        <!-- Chat log -->
+                        <div class="chat-messages" id="wtrh-chat-messages" role="log" aria-live="polite">
+                            <!-- Messages populated by JavaScript -->
+                        </div>
+
+                        <!-- Chat Controls (Options / Perspective Reveal) -->
+                        <div class="chat-controls-wrapper">
+                            
+                            <!-- Normal choice options screen -->
+                            <div class="chat-controls" id="wtrh-chat-controls">
+                                <p class="controls-label">Choose your response:</p>
+                                <div class="chat-options" id="wtrh-chat-options">
+                                    <!-- Options generated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Perspective Reveal Screen Overlay -->
+                        <div class="perspective-reveal-panel" id="perspective-reveal-overlay" style="display: none;">
+                            <div class="perspective-reveal-header">
+                                <h4>Perspective Reveal</h4>
+                                <span class="perspective-badge">Analysis</span>
+                            </div>
+                            
+                            <div class="perspective-columns-grid">
+                                <!-- What You Said -->
+                                <div class="reveal-column column-said">
+                                    <h5 class="reveal-col-title">💬 What You Said</h5>
+                                    <div class="reveal-bubble user" id="reveal-text-said">Selected text...</div>
+                                </div>
+                                
+                                <!-- What You Intended -->
+                                <div class="reveal-column column-meant">
+                                    <h5 class="reveal-col-title">💭 What You Intended</h5>
+                                    <div class="reveal-bubble meant" id="reveal-text-meant">Your positive intention...</div>
+                                </div>
+                                
+                                <!-- What They Heard -->
+                                <div class="reveal-column column-heard">
+                                    <h5 class="reveal-col-title">👂 What They Heard</h5>
+                                    <div class="reveal-bubble heard" id="reveal-text-heard">How they interpreted it...</div>
+                                </div>
+                            </div>
+
+                            <!-- Context Warning Check -->
+                            <div class="context-warning-box" id="context-warning-box" style="display: none;">
+                                <span class="warning-title">⚠️ Context Check</span>
+                                <p class="warning-desc" id="context-warning-text">How this phrase shifts meaning in different scenarios...</p>
+                            </div>
+
+                            <!-- Communication Insight Explanation -->
+                            <div class="insight-box" id="reveal-insight-box">
+                                <span class="insight-title">💡 Communication Insight</span>
+                                <p class="insight-desc" id="reveal-text-explanation">Why the intention and impact differ...</p>
+                            </div>
+
+                            <div class="perspective-actions">
+                                <button class="btn btn-secondary" id="reveal-rewind-btn">
+                                    ⏱️ Rewind & Retry
+                                </button>
+                                <button class="btn btn-primary" id="reveal-continue-btn">
+                                    Next Message &rarr;
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Level Completion Summary Screen -->
+                <div class="quiz-card completion-card reveal" id="level-completion-screen" style="display: none; max-width: 800px; margin: 0 auto;">
+                    <div class="quiz-result-screen">
+                        <div class="result-badge-icon" id="completion-icon">🎖️</div>
+                        <h3 class="result-title" id="completion-title">Level Completed!</h3>
+                        <p class="result-score" id="completion-score">Listening & Empathy Balanced</p>
+                        
+                        <div class="completion-meters-summary">
+                            <!-- Dynamic summary of scores -->
+                        </div>
+                        
+                        <p class="result-desc" id="completion-desc">
+                            A summary of the conversational outcome and reflection on the difference between intent and impact.
+                        </p>
+                        
+                        <div class="result-actions">
+                            <button class="btn btn-primary" id="completion-next-level-btn">Next Level</button>
+                            <button class="btn btn-secondary" id="completion-replay-btn">Replay Level</button>
+                            <button class="btn btn-secondary" id="completion-exit-btn">Return to Levels</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- The Support Meter Section -->
+        <section class="support-meter-section" id="support-meter">
+            <!-- Ambient glows for visual premium feel -->
+            <div class="ambient-blob sm-blob-1" aria-hidden="true"></div>
+            <div class="ambient-blob sm-blob-2" aria-hidden="true"></div>
+
+            <div class="container">
+                <div class="section-header text-center reveal">
+                    <span class="badge section-badge">Interactive Game</span>
+                    <h2 class="section-title">The Support Meter</h2>
+                    <p class="section-desc">
+                        Are you supporting, advising, or fixing? Test your instincts across 4 challenging scenarios. Learn to recognize the difference and find the right way to be there for your friends.
+                    </p>
+                </div>
+
+                <div class="support-meter-game-box reveal">
+                    <!-- Progress & Profile Header -->
+                    <div class="game-meta-row">
+                        <div class="level-indicator">
+                            <span class="lbl-level">Difficulty:</span>
+                            <span class="val-level" id="sm-level-val">Level 1</span>
+                        </div>
+                        <div class="progress-indicator-dots" id="sm-progress-dots">
+                            <span class="dot active"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                        <div class="combo-indicator">
+                            <span class="lbl-combo">Current Style:</span>
+                            <span class="val-combo" id="sm-combo-val">Evaluating...</span>
+                        </div>
+                    </div>
+
+                    <div class="game-main-layout">
+                        <!-- Left Pane: Mock Smartphone Interface -->
+                        <div class="game-scenario-pane">
+                            <div class="mobile-mock-card">
+                                <div class="mobile-mock-header">
+                                    <div class="mobile-mock-user">
+                                        <div class="mobile-mock-avatar-container">
+                                            <span class="mobile-mock-avatar" id="sm-avatar">👤</span>
+                                        </div>
+                                        <div>
+                                            <div class="mobile-mock-name" id="sm-name">Friend Name</div>
+                                            <div class="mobile-mock-status" id="sm-status">Online</div>
+                                        </div>
+                                    </div>
+                                    <span class="mock-network">5G</span>
+                                </div>
+                                <div class="mobile-mock-chat-log" id="sm-chat-log">
+                                    <!-- Populated dynamically by script.js -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Pane: Interaction and SVG Gauge -->
+                        <div class="game-interaction-pane">
+                            <!-- Options Screen -->
+                            <div class="sm-choices-card" id="sm-choices-card">
+                                <p class="interaction-label">Choose how you would reply:</p>
+                                <div class="choices-container" id="sm-choices-container">
+                                    <!-- Populated dynamically by script.js -->
+                                </div>
+                            </div>
+
+                            <!-- Reveal and Gauge Screen -->
+                            <div class="sm-reveal-card" id="sm-reveal-card" style="display: none;">
+                                <div class="meter-centerpiece">
+                                    <div class="svg-meter-container">
+                                        <svg class="gauge-svg" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                                            <defs>
+                                                <!-- Gradients for sections -->
+                                                <linearGradient id="sm-grad-fixing" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                    <stop offset="0%" stop-color="#e63946" />
+                                                    <stop offset="100%" stop-color="#ff7b88" />
+                                                </linearGradient>
+                                                <linearGradient id="sm-grad-advising" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                    <stop offset="0%" stop-color="#ffb703" />
+                                                    <stop offset="100%" stop-color="#fb8500" />
+                                                </linearGradient>
+                                                <linearGradient id="sm-grad-supporting" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                    <stop offset="0%" stop-color="#06d6a0" />
+                                                    <stop offset="100%" stop-color="#4ade80" />
+                                                </linearGradient>
+                                                <!-- Shadow Glow Effect -->
+                                                <filter id="sm-glow-effect" x="-30%" y="-30%" width="160%" height="160%">
+                                                    <feGaussianBlur stdDeviation="5" result="blur" />
+                                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                                </filter>
+                                            </defs>
+
+                                            <!-- Base track arc -->
+                                            <path d="M 20,100 A 80,80 0 0,1 180,100" fill="none" stroke="var(--clr-border)" stroke-width="12" stroke-linecap="round"/>
+
+                                            <!-- Fixing Sector (Red, 180deg to 120deg) -->
+                                            <path class="arc-sector sm-arc-fixing" d="M 20,100 A 80,80 0 0,1 180,100" fill="none" stroke="url(#sm-grad-fixing)" stroke-width="12" stroke-dasharray="41.9 1000" stroke-dashoffset="125.6" stroke-linecap="round"/>
+                                            <!-- Advising Sector (Yellow, 120deg to 60deg) -->
+                                            <path class="arc-sector sm-arc-advising" d="M 20,100 A 80,80 0 0,1 180,100" fill="none" stroke="url(#sm-grad-advising)" stroke-width="12" stroke-dasharray="41.9 1000" stroke-dashoffset="83.7"/>
+                                            <!-- Supporting Sector (Green, 60deg to 0deg) -->
+                                            <path class="arc-sector sm-arc-supporting" d="M 20,100 A 80,80 0 0,1 180,100" fill="none" stroke="url(#sm-grad-supporting)" stroke-width="12" stroke-dasharray="41.9 1000" stroke-dashoffset="41.8" stroke-linecap="round"/>
+
+                                            <!-- Zone Labels -->
+                                            <text x="45" y="65" class="svg-label" text-anchor="middle" fill="#e63946">FIXING</text>
+                                            <text x="100" y="32" class="svg-label" text-anchor="middle" fill="#ffb703">ADVISING</text>
+                                            <text x="155" y="65" class="svg-label" text-anchor="middle" fill="#06d6a0">SUPPORT</text>
+
+                                            <!-- Center Pin Base -->
+                                            <circle cx="100" cy="100" r="10" fill="var(--clr-dark)" />
+                                            <!-- Needle element with cubic-bezier bounce -->
+                                            <g id="sm-needle" style="transform-origin: 100px 100px; transform: rotate(0deg); transition: transform 2.2s cubic-bezier(0.25, 1.6, 0.5, 1.2);">
+                                                <path d="M 100,98 L 18,100 L 100,102 Z" fill="var(--clr-primary)" filter="url(#sm-glow-effect)"/>
+                                                <circle cx="100" cy="100" r="4" fill="var(--clr-accent)" />
+                                            </g>
+                                        </svg>
+                                    </div>
+
+                                    <!-- Landing Indicator -->
+                                    <div class="meter-text-indicator" id="sm-meter-indicator">
+                                        Analyzing choice...
+                                    </div>
+                                </div>
+
+                                <!-- Dynamic Reflection Details Card -->
+                                <div class="reflection-details" id="sm-reflection-details" style="opacity: 0;">
+                                    <h4 class="reflection-sec-title">Landing Classification</h4>
+                                    
+                                    <div class="reflection-block">
+                                        <div class="ref-sub-lbl">💡 Why this response landed here:</div>
+                                        <div class="ref-sub-val" id="sm-ref-why">Detailed classification explanation...</div>
+                                    </div>
+
+                                    <div class="reflection-grid-two">
+                                        <div class="reflection-block good">
+                                            <div class="ref-sub-lbl">🟢 What it does well:</div>
+                                            <div class="ref-sub-val" id="sm-ref-well">Positives...</div>
+                                        </div>
+                                        <div class="reflection-block miss">
+                                            <div class="ref-sub-lbl">⚠️ What it might miss:</div>
+                                            <div class="ref-sub-val" id="sm-ref-miss">Limitations...</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="reflection-block alt" id="sm-ref-alt-block">
+                                        <div class="ref-sub-lbl">🌟 Better Supporting Alternative:</div>
+                                        <div class="ref-sub-val" id="sm-ref-alt">Suggested phrasing alternative...</div>
+                                    </div>
+
+                                    <div class="reflection-actions">
+                                        <button class="btn btn-secondary" id="sm-retry-btn">⏱️ Rewind Choice</button>
+                                        <button class="btn btn-primary" id="sm-next-btn">Next Scenario &rarr;</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Final Style Report Card -->
+                    <div class="sm-report-card" id="sm-report-card" style="display: none;">
+                        <div class="report-badge-icon">📊</div>
+                        <h3 class="report-title">Your Support Style Report</h3>
+                        <p class="report-subtitle">A personalized reflection on how you show up for friends</p>
+
+                        <div class="report-profile-box">
+                            <span class="profile-tag" id="sm-report-profile-tag">The Listener</span>
+                            <p class="profile-desc" id="sm-report-profile-desc">Description of communication style habits...</p>
+                        </div>
+
+                        <!-- Response breakdown progress list -->
+                        <div class="report-breakdown-container">
+                            <h4 class="breakdown-title">Response Profile Breakdown</h4>
+                            <div class="breakdown-bars-list">
+                                <div class="breakdown-bar-item">
+                                    <div class="breakdown-bar-lbl">🟢 Supporting: <span id="sm-pct-supporting">0%</span></div>
+                                    <div class="breakdown-bar-bg">
+                                        <div class="breakdown-bar-fill fill-supporting" id="sm-bar-supporting" style="width: 0%;"></div>
+                                    </div>
+                                </div>
+                                <div class="breakdown-bar-item">
+                                    <div class="breakdown-bar-lbl">🟡 Advising: <span id="sm-pct-advising">0%</span></div>
+                                    <div class="breakdown-bar-bg">
+                                        <div class="breakdown-bar-fill fill-advising" id="sm-bar-advising" style="width: 0%;"></div>
+                                    </div>
+                                </div>
+                                <div class="breakdown-bar-item">
+                                    <div class="breakdown-bar-lbl">🔴 Fixing: <span id="sm-pct-fixing">0%</span></div>
+                                    <div class="breakdown-bar-bg">
+                                        <div class="breakdown-bar-fill fill-fixing" id="sm-bar-fixing" style="width: 0%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="reflection-grid-two">
+                            <div class="reflection-block good">
+                                <div class="ref-sub-lbl">🌟 Your Style Strengths:</div>
+                                <div class="ref-sub-val" id="sm-report-strengths">Strengths list...</div>
+                            </div>
+                            <div class="reflection-block miss">
+                                <div class="ref-sub-lbl">⚠️ Potential Blind Spots:</div>
+                                <div class="ref-sub-val" id="sm-report-blindspots">Blindspots list...</div>
+                            </div>
+                        </div>
+
+                        <div class="reflection-block alt">
+                            <div class="ref-sub-lbl">💡 How to become a more balanced supporter:</div>
+                            <div class="ref-sub-val" id="sm-report-suggestions">Actionable suggestions to improve active listening...</div>
+                        </div>
+
+                        <div class="result-actions" style="margin-top: 32px;">
+                            <button class="btn btn-primary" id="sm-replay-all-btn">Play Game Again</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Quiz Section -->
+        <section class="quiz-section" id="quiz">
+            <div class="container">
+                <div class="section-header text-center reveal">
+                    <span class="badge section-badge">Self Assessment</span>
+                    <h2 class="section-title">Are you a Lighthouse Friend?</h2>
+                    <p class="section-desc">
+                        Find out how emotionally aware you are of your peers. Learn key insights on listening, establishing healthy boundaries, and understanding teen psychology.
+                    </p>
+                </div>
+
+                <div class="quiz-box-wrapper reveal">
+                    <div class="quiz-card" id="quiz-card">
+                        <!-- Start Screen -->
+                        <div class="quiz-start-screen" id="quiz-start-screen">
+                            <div class="quiz-icon-large" aria-hidden="true">🕯️</div>
+                            <h3>Test your Peer-Support Instincts</h3>
+                            <p>Take this brief 4-question interactive assessment based on real behavioral science to evaluate how well you handle situations involving peer distress.</p>
+                            <button class="btn btn-primary" id="start-quiz-btn">Start the Assessment</button>
+                        </div>
+
+                        <!-- Question Screen (hidden initially) -->
+                        <div class="quiz-question-screen" id="quiz-question-screen" style="display: none;">
+                            <div class="quiz-progress-wrapper">
+                                <div class="quiz-progress-bar-container">
+                                    <div class="quiz-progress-bar-fill" id="quiz-progress-fill"></div>
+                                </div>
+                                <span class="quiz-progress-text" id="quiz-progress-text">Question 1 of 4</span>
+                            </div>
+                            <h3 class="quiz-question-title" id="quiz-question-title">Question goes here?</h3>
+                            <div class="quiz-answers" id="quiz-answers">
+                                <!-- Answers will be generated by script.js -->
+                            </div>
+                        </div>
+
+                        <!-- Results Screen (hidden initially) -->
+                        <div class="quiz-result-screen" id="quiz-result-screen" style="display: none;">
+                            <div class="result-badge-icon" id="result-badge-icon">🎖️</div>
+                            <h3 class="result-title" id="result-title">You are a Compassionate Listener!</h3>
+                            <p class="result-score" id="result-score">Score: 4/4</p>
+                            <p class="result-desc" id="result-desc">Description text goes here.</p>
+                            <div class="result-actions">
+                                <button class="btn btn-primary" id="retry-quiz-btn">Try Again</button>
+                                <a href="#get-involved" class="btn btn-secondary">Request Training</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resource Hub Section -->
+        <section class="resources-section" id="resources">
+            <div class="container">
+                <div class="section-header text-center reveal">
+                    <span class="badge section-badge">Resources</span>
+                    <h2 class="section-title">The Peer First-Aid Kit</h2>
+                    <p class="section-desc">
+                        Download these free digital guides designed by mental health professionals to help teenagers, parents, and educators foster stronger support groups.
+                    </p>
+                </div>
+
+                <div class="resources-grid reveal">
+                    <!-- Resource Card 1 -->
+                    <div class="resource-card">
+                        <div class="resource-type">PDF Checklist</div>
+                        <h3 class="resource-title">Recognising Distress Cheat Sheet</h3>
+                        <p class="resource-desc">
+                            A one-page guide highlighting specific behavioral flags, text-messaging cues, and social warning signs to watch out for.
+                        </p>
+                        <a href="#" class="resource-download-btn" aria-label="Download Recognising Distress Cheat Sheet PDF">
+                            <span>Download Resource</span>
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <!-- Resource Card 2 -->
+                    <div class="resource-card">
+                        <div class="resource-type">Interactive Blueprint</div>
+                        <h3 class="resource-title">The Approach Conversation Starter</h3>
+                        <p class="resource-desc">
+                            Practical, real-life scripts for talking about mental health. Learn exactly how to open the talk and handle silence without feeling awkward.
+                        </p>
+                        <a href="#" class="resource-download-btn" aria-label="Download Approach Conversation Starter Blueprint">
+                            <span>Download Resource</span>
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <!-- Resource Card 3 -->
+                    <div class="resource-card">
+                        <div class="resource-type">Boundary Guide</div>
+                        <h3 class="resource-title">Understanding My Support Limits</h3>
+                        <p class="resource-desc">
+                            Crucial boundaries for teenagers. Learn how to support a close friend without letting their emotional struggles harm your own mental well-being.
+                        </p>
+                        <a href="#" class="resource-download-btn" aria-label="Download Understanding My Support Limits Guide">
+                            <span>Download Resource</span>
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Anonymous Survey Section -->
+        <section class="survey-section" id="share-thoughts">
+            <!-- Ambient glows for visual premium feel -->
+            <div class="ambient-blob sm-blob-1" aria-hidden="true"></div>
+            <div class="container">
+                <div class="section-header text-center reveal">
+                    <span class="badge section-badge">Anonymous Survey</span>
+                    <h2 class="section-title">Share Your Thoughts</h2>
+                    <p class="section-desc">
+                        Your input helps us understand teen mental health dynamics and shape peer-support strategies. Responses are 100% anonymous and no personal details are tracked.
+                    </p>
+                </div>
+
+                <div class="survey-card reveal">
+                    <form id="anonymous-survey-form" novalidate>
+                        <div class="form-group">
+                            <label for="survey-q1" class="survey-label">
+                                1. What is one thing you wish more people understood about supporting a friend who is struggling emotionally? <span class="required" aria-hidden="true">*</span>
+                            </label>
+                            <textarea id="survey-q1" required placeholder="Share your perspective, feelings, or experiences here..." rows="4"></textarea>
+                            <span class="form-error-msg" id="error-q1" role="alert">Please share your thoughts for this question</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="survey-q2" class="survey-label">
+                                2. What would help teenagers feel more comfortable reaching out for support when they need it? <span class="required" aria-hidden="true">*</span>
+                            </label>
+                            <textarea id="survey-q2" required placeholder="What barriers do you see? What would make it easier to talk?" rows="4"></textarea>
+                            <span class="form-error-msg" id="error-q2" role="alert">Please share your thoughts for this question</span>
+                        </div>
+
+                        <div class="text-center" style="margin-top: 24px;">
+                            <button type="submit" class="btn btn-primary" id="survey-submit-btn">Submit Anonymously</button>
+                            <div class="survey-success-toast" id="survey-success-toast" style="display: none; color: var(--clr-success); margin-top: 15px; font-weight: 600;">
+                                🕊️ Thank you! Your anonymous response has been submitted to our team.
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Us Section -->
+        <section class="contact-section" id="contact">
+            <div class="container">
+                <div class="contact-box reveal">
+                    <h3 class="contact-title">Contact Us</h3>
+                    <p class="contact-text">
+                        Questions, feedback, or interested in learning more? Contact us via email or Instagram.
+                    </p>
+                    <div class="contact-methods">
+                        <div class="contact-method-item">
+                            <span class="contact-icon">📧</span>
+                            <div class="contact-details">
+                                <span class="contact-lbl">Email</span>
+                                <a href="mailto:thelighthouseproject26@gmail.com" class="contact-link">thelighthouseproject26@gmail.com</a>
+                            </div>
+                        </div>
+                        <div class="contact-method-item">
+                            <span class="contact-icon">📸</span>
+                            <div class="contact-details">
+                                <span class="contact-lbl">Instagram</span>
+                                <a href="https://instagram.com/thelighthouseproject2026" target="_blank" rel="noopener" class="contact-link">@thelighthouseproject2026</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Instagram Feed Section -->
+        <section class="instagram-feed-section" id="instagram-feed">
+            <div class="container">
+                <div class="section-header text-center">
+                    <span class="section-badge">Moments on Instagram</span>
+                    <h2 class="section-title">Follow Our Journey</h2>
+                    <p class="section-desc">See the latest stories, community highlights, and tips on youth peer support at <a href="https://instagram.com/thelighthouseproject2026" target="_blank" rel="noopener">@thelighthouseproject2026</a></p>
+                </div>
+                <div class="instagram-grid">
+                    <!-- Post 1 -->
+                    <a href="https://instagram.com/thelighthouseproject2026" target="_blank" rel="noopener" class="instagram-card">
+                        <div class="instagram-img-wrapper">
+                            <img src="./colours3.jpeg" alt="Instagram Post - Peer support session workshops">
+                            <div class="instagram-overlay">
+                                <span class="instagram-overlay-icon">❤️ 124</span>
+                                <span class="instagram-overlay-icon">💬 12</span>
+                            </div>
+                        </div>
+                    </a>
+                    <!-- Post 2 -->
+                    <a href="https://instagram.com/thelighthouseproject2026" target="_blank" rel="noopener" class="instagram-card">
+                        <div class="instagram-img-wrapper">
+                            <img src="./colours.jpeg" alt="Instagram Post - Lighthouse motto illustration">
+                            <div class="instagram-overlay">
+                                <span class="instagram-overlay-icon">❤️ 98</span>
+                                <span class="instagram-overlay-icon">💬 8</span>
+                            </div>
+                        </div>
+                    </a>
+                    <!-- Post 3 -->
+                    <a href="https://instagram.com/thelighthouseproject2026" target="_blank" rel="noopener" class="instagram-card">
+                        <div class="instagram-img-wrapper">
+                            <img src="./colours2.jpeg" alt="Instagram Post - Teen mental health awareness seminar">
+                            <div class="instagram-overlay">
+                                <span class="instagram-overlay-icon">❤️ 156</span>
+                                <span class="instagram-overlay-icon">💬 18</span>
+                            </div>
+                        </div>
+                    </a>
+                    <!-- Post 4 -->
+                    <a href="https://instagram.com/thelighthouseproject2026" target="_blank" rel="noopener" class="instagram-card">
+                        <div class="instagram-img-wrapper">
+                            <img src="./Logo.jpeg" alt="Instagram Post - Empowering youth to support not solve">
+                            <div class="instagram-overlay">
+                                <span class="instagram-overlay-icon">❤️ 210</span>
+                                <span class="instagram-overlay-icon">💬 24</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand-col">
+                <a href="#home" class="footer-logo-link">
+                    <img src="./Logo.jpeg" alt="The Lighthouse Project Footer Logo" class="footer-logo">
+                    <span class="footer-logo-text">The Lighthouse <span class="accent-text">Project</span></span>
+                </a>
+                <p class="footer-motto">“Helping people find their way back”</p>
+                <p class="footer-desc">
+                    A registered non-profit youth initiative focused on building emotionally aware peer communities through specialized active listening and support frameworks.
+                </p>
+            </div>
+
+            <div class="footer-links-col">
+                <h4>Explore</h4>
+                <ul class="footer-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#pillars">Core Pillars</a></li>
+                    <li><a href="#philosophy">Our Philosophy</a></li>
+                    <li><a href="#simulator">What They Really Heard</a></li>
+                    <li><a href="#support-meter">The Support Meter</a></li>
+                    <li><a href="#quiz">Lighthouse Quiz</a></li>
+                    <li><a href="#share-thoughts">Share Your Thoughts</a></li>
+                    <li><a href="#contact">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-newsletter-col">
+                <h4>Subscribe to our Newsletter</h4>
+                <p>Get bi-weekly peer support checklists, conversation guides, and workshop announcements directly to your inbox.</p>
+                
+                <form id="newsletter-form" class="newsletter-form" novalidate>
+                    <label for="newsletter-email" class="sr-only">Email Address</label>
+                    <input type="email" id="newsletter-email" placeholder="Enter your email" required aria-label="Email Address">
+                    <button type="submit" class="btn btn-accent" id="newsletter-submit-btn" aria-label="Subscribe to newsletter">
+                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </form>
+                <span class="newsletter-error" id="newsletter-error" role="alert"></span>
+            </div>
+        </div>
+
+        <div class="container footer-bottom">
+            <p class="copyright-text">&copy; 2026 The Lighthouse Project. Licensed under Creative Commons. Made with empathy for youth mental well-being.</p>
+            <div class="footer-socials">
+                <a href="#" aria-label="The Lighthouse Project on Instagram" class="social-icon-link">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                    </svg>
+                </a>
+                <a href="#" aria-label="The Lighthouse Project on YouTube" class="social-icon-link">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M23.498 6.163a3.003 3.003 0 00-2.11-2.11C19.518 3.5 12 3.5 12 3.5s-7.518 0-9.388.553a3.003 3.003 0 00-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 002.11 2.11C4.482 20.5 12 20.5 12 20.5s7.518 0 9.388-.553a3.003 3.003 0 002.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                </a>
+                <a href="#" aria-label="The Lighthouse Project on Twitter" class="social-icon-link">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+
+
+    <!-- Script file -->
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Lighthouse Project | Admin Dashboard</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description"
+        content="Secure administrative panel for managing The Lighthouse Project peer support platform statistics, survey responses, and resource files.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Supabase client JS SDK & Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="admin-body">
+
+    <!-- Scroll Indicator -->
+    <div id="scroll-progress" class="scroll-progress-bar" aria-hidden="true"></div>
+
+    <!-- Login Container -->
+    <main class="admin-login-container" id="admin-login-screen">
+        <div class="admin-login-card reveal visible">
+            <div class="login-brand text-center">
+                <img src="./Logo.jpeg" alt="The Lighthouse Project Logo" class="login-logo">
+                <h2>Lighthouse Portal</h2>
+                <p>Administrative Access Login</p>
+            </div>
+
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="admin-email">Username or Email</label>
+                    <input type="text" id="admin-email" placeholder="admin / email@lighthouse.org" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin-password">Password</label>
+                    <input type="password" id="admin-password" placeholder="••••••••" required>
+                </div>
+                <span class="login-error-msg" id="login-error-msg" role="alert"></span>
+                <button type="submit" class="btn btn-primary w-full">Log In</button>
+            </form>
+            <div class="login-notice text-center">
+                <p>🔒 Session security is audited. Authorized access only.</p>
+                <div class="test-credentials-toggle-box" style="margin-top: 10px;">
+                    <details class="dev-credentials-details" style="font-size: 0.85rem; color: var(--clr-muted); opacity: 0.9; text-align: center; border: 1px solid var(--clr-border); padding: 8px 12px; border-radius: 12px; display: inline-block; background: var(--clr-white);">
+                        <summary style="cursor: pointer; user-select: none; font-weight: 600; outline: none;">Need testing credentials?</summary>
+                        <p style="margin-top: 6px; font-family: monospace; font-size: 0.8rem; background: rgba(0,0,0,0.05); padding: 4px 8px; border-radius: 6px; display: inline-block; margin-bottom: 0;">
+                            Username: <strong>admin</strong><br>
+                            Password: <strong>lighthouse2026</strong>
+                        </p>
+                    </details>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Main Dashboard Panel -->
+    <main class="admin-dashboard-container" id="admin-dashboard-panel" style="display: none;">
+        <!-- Dashboard Top Header Bar -->
+        <header class="admin-header">
+            <div class="admin-brand-logo">
+                <img src="./Logo.jpeg" alt="The Lighthouse Project Logo" class="admin-mini-logo">
+                <div>
+                    <h1>Lighthouse Control Hub</h1>
+                    <span class="admin-badge-role">System Administrator</span>
+                </div>
+            </div>
+            <div class="admin-actions">
+                <a href="index.html" class="btn btn-secondary btn-sm">View Website</a>
+                <button class="btn btn-primary btn-sm" id="logout-btn">Log Out</button>
+            </div>
+        </header>
+
+        <div class="admin-content-grid">
+            <!-- Left Sidebar Navigation -->
+            <aside class="admin-sidebar">
+                <nav class="admin-nav-menu">
+                    <a href="#stats-anchor" class="admin-nav-item active" id="menu-stats">📊 Dashboard Summary</a>
+                    <a href="#responses-anchor" class="admin-nav-item" id="menu-responses">💬 Survey Moderation</a>
+                    <a href="#resources-anchor" class="admin-nav-item" id="menu-resources">📂 Upload Resources</a>
+                </nav>
+            </aside>
+
+            <!-- Main Work Area Content -->
+            <section class="admin-main-area">
+
+                <!-- Section 1: Dashboard Stats & Analytics -->
+                <div id="stats-section-wrapper" class="dashboard-section-block">
+                    <h2 class="admin-section-heading" id="stats-anchor">Dashboard Summary</h2>
+
+                    <!-- Stats Widget Cards Grid -->
+                    <div class="admin-widgets-grid">
+                        <div class="admin-stat-card">
+                            <span class="widget-icon">📥</span>
+                            <div class="widget-details">
+                                <h4 class="widget-title">Survey Submissions</h4>
+                                <span class="widget-value" id="stat-total-submissions">0</span>
+                                <p class="widget-desc">Anonymous answers recorded</p>
+                            </div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <span class="widget-icon">🧭</span>
+                            <div class="widget-details">
+                                <h4 class="widget-title">Simulator Attempts</h4>
+                                <span class="widget-value" id="stat-simulator-attempts">0</span>
+                                <p class="widget-desc">Level completions logged</p>
+                            </div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <span class="widget-icon">❤️</span>
+                            <div class="widget-details">
+                                <h4 class="widget-title">Peer Support Rating</h4>
+                                <span class="widget-value" id="stat-empathy-score">0%</span>
+                                <p class="widget-desc">Average validation metrics</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart Card -->
+                    <div class="admin-chart-card card-content">
+                        <h3>Submissions Analytics</h3>
+                        <div class="chart-canvas-container">
+                            <canvas id="submissionsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Survey Moderation List -->
+                <div id="responses-section-wrapper" class="dashboard-section-block">
+                    <h2 class="admin-section-heading" id="responses-anchor">Anonymous Survey Moderation</h2>
+                    <div class="admin-table-card card-content">
+                        <div class="table-header-bar">
+                            <h3>Recorded User Responses</h3>
+                            <button class="btn btn-secondary btn-sm" id="refresh-responses-btn">🔄 Refresh Data</button>
+                        </div>
+                        <div class="table-responsive-wrapper">
+                            <table class="admin-moderation-table" id="survey-data-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 80px;">ID</th>
+                                        <th style="width: 150px;">Submitted At</th>
+                                        <th>Q1: What we wish people understood about peer support</th>
+                                        <th>Q2: What helps teenagers reach out for support</th>
+                                        <th style="width: 100px; text-align: center;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="survey-table-body">
+                                    <tr>
+                                        <td colspan="5" class="text-center py-8">Fetching submissions...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: File Resources Uploader -->
+                <div id="resources-section-wrapper" class="dashboard-section-block">
+                    <h2 class="admin-section-heading" id="resources-anchor">Upload Resource Files</h2>
+                    <div class="admin-upload-card card-content">
+                        <div class="upload-split-layout">
+                            <div class="upload-form-pane">
+                                <h3>Add Resource Item</h3>
+                                <p class="section-subtitle-desc">Upload documents and guides directly to the public
+                                    Resource Hub.</p>
+
+                                <form id="resource-upload-form" class="admin-form">
+                                    <div class="form-group">
+                                        <label for="resource-title">Resource Title</label>
+                                        <input type="text" id="resource-title"
+                                            placeholder="e.g. Active Listening Handbook" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="resource-category">Category</label>
+                                        <select id="resource-category" required>
+                                            <option value="">Select Category...</option>
+                                            <option value="guides">Guides & Handbooks</option>
+                                            <option value="infographics">Infographics & Summaries</option>
+                                            <option value="toolkits">Peer Support Toolkits</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="resource-desc">Description</label>
+                                        <textarea id="resource-desc" rows="3"
+                                            placeholder="Brief summary of file contents..." required></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="resource-file">Select File</label>
+                                        <div class="file-uploader-box">
+                                            <input type="file" id="resource-file" required>
+                                            <span class="file-custom-label">📂 Choose PDF or Document</span>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" id="upload-submit-btn">Upload &
+                                        Publish</button>
+                                </form>
+                            </div>
+
+                            <div class="upload-list-pane">
+                                <h3>Active Resource Directory</h3>
+                                <ul class="directory-list" id="resource-directory-list">
+                                    <!-- Populated dynamically -->
+                                    <li class="directory-item text-center py-4">No uploaded resources found.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <!-- Success Feedback Toast Alert -->
+    <div class="toast-alert" id="admin-success-toast" role="status" aria-live="polite">
+        <span class="toast-icon">✓</span>
+        <span class="toast-message" id="admin-toast-message">Operation successful!</span>
+    </div>
+
+    <!-- Script logic -->
+    <script>
+        // Supabase Database Connection Config (Replaced by user)
+        const SUPABASE_URL = 'https://wsxycwkgoxziaxzsfiae.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzeHljd2tnb3h6aWF4enNmaWFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3MTQzNjEsImV4cCI6MjA5NjI5MDM2MX0.PjayQwVLVnsF6Ai_sdVJb9wy7U_xiAuV1OJBkXL0i8E';
+        let supabaseClient = null;
+        let useMockData = true; // Default to true until a live login succeeds
+
+        // Initialize Supabase if keys are set
+        if (SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            useMockData = false; // Default to live if keys are set
+        }
+
+        // Admin Access Credentials (Change these to secure your admin panel)
+        const ADMIN_USERNAME = 'admin';
+        const ADMIN_PASSWORD = 'lighthouse2026';
+
+        // Fallback data arrays when live Supabase is offline/unconfigured
+        let mockSurveyResponses = [];
+        let mockResources = [];
+
+        let submissionsChart = null;
+
+        // DOM elements
+        const loginScreen = document.getElementById('admin-login-screen');
+        const dashboardPanel = document.getElementById('admin-dashboard-panel');
+        const loginForm = document.getElementById('login-form');
+        const loginEmail = document.getElementById('admin-email');
+        const loginPass = document.getElementById('admin-password');
+        const loginError = document.getElementById('login-error-msg');
+        const logoutBtn = document.getElementById('logout-btn');
+        const refreshBtn = document.getElementById('refresh-responses-btn');
+        const surveyTableBody = document.getElementById('survey-table-body');
+        const uploadForm = document.getElementById('resource-upload-form');
+        const directoryList = document.getElementById('resource-directory-list');
+
+        const statTotalSubmissions = document.getElementById('stat-total-submissions');
+
+        // Navigation Highlight
+        const navItems = document.querySelectorAll('.admin-nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                navItems.forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+
+        // Toast feedback trigger
+        function showToast(message) {
+            const toast = document.getElementById('admin-success-toast');
+            document.getElementById('admin-toast-message').textContent = message;
+            toast.style.display = 'flex';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 4000);
+        }
+
+        // Login Handler
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = loginEmail.value.trim();
+            const password = loginPass.value.trim();
+            loginError.style.display = 'none';
+
+            // 1. Check for configurable admin credentials bypass first
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                showToast('Logged in successfully.');
+                useMockData = (supabaseClient === null); // Load live Supabase data if connected!
+                initializeDashboard();
+                return;
+            }
+
+            // 2. Otherwise, attempt live Supabase authentication
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient.auth.signInWithPassword({
+                        email: username,
+                        password: password
+                    });
+                    if (error) throw error;
+
+                    showToast('Logged in successfully via Supabase!');
+                    useMockData = false; // Set to false to fetch live responses
+                    initializeDashboard();
+                } catch (err) {
+                    loginError.textContent = 'Auth Error: ' + err.message;
+                    loginError.style.display = 'block';
+                }
+            } else {
+                loginError.textContent = 'Invalid credentials. Hint: use admin / lighthouse2026';
+                loginError.style.display = 'block';
+            }
+        });
+
+        // Logout Handler
+        logoutBtn.addEventListener('click', async () => {
+            if (supabaseClient) {
+                await supabaseClient.auth.signOut();
+            }
+            dashboardPanel.style.display = 'none';
+            loginScreen.style.display = 'flex';
+            loginEmail.value = '';
+            loginPass.value = '';
+            showToast('Logged out successfully.');
+        });
+
+        // Initialize dashboard data
+        function initializeDashboard() {
+            loginScreen.style.display = 'none';
+            dashboardPanel.style.display = 'block';
+
+            fetchSurveyResponses();
+            fetchResources();
+        }
+
+        // Fetch Survey Submissions and Stats
+        async function fetchSurveyResponses() {
+            if (supabaseClient && !useMockData) {
+                try {
+                    // 1. Fetch survey responses
+                    const { data: surveys, error: surveyError } = await supabaseClient
+                        .from('survey_responses')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+
+                    if (surveyError) throw surveyError;
+                    renderSubmissionsTable(surveys);
+                    
+                    // 2. Fetch simulator attempts
+                    let attemptsCount = 0; // Clean default fallback
+                    let empathyRate = 0;   // Clean default fallback
+
+                    try {
+                        const { data: attempts, error: attemptsError } = await supabaseClient
+                            .from('simulator_attempts')
+                            .select('*');
+
+                        if (!attemptsError && attempts) {
+                            if (attempts.length > 0) {
+                                attemptsCount = attempts.length;
+                                // Calculate success rate of Connection
+                                const successAttempts = attempts.filter(a => a.outcome === 'success').length;
+                                empathyRate = Math.round((successAttempts / attemptsCount) * 100);
+                            } else {
+                                attemptsCount = 0;
+                                empathyRate = 100;
+                            }
+                        }
+                    } catch (err) {
+                        console.warn('Could not query simulator_attempts table, using default values.');
+                    }
+
+                    // Update UI stats widgets
+                    updateStatsWidgets(surveys.length, attemptsCount, empathyRate);
+                    buildAnalyticsChart(surveys);
+                } catch (err) {
+                    console.error('Error fetching survey data:', err.message);
+                    renderSubmissionsTable([]);
+                    // Fallback to defaults
+                    updateStatsWidgets(0, 0, 0);
+                }
+            } else {
+                // Load local mock values
+                renderSubmissionsTable(mockSurveyResponses);
+                updateStatsWidgets(mockSurveyResponses.length, 0, 0);
+                buildAnalyticsChart(mockSurveyResponses);
+            }
+        }
+
+        // Update statistics cards values
+        function updateStatsWidgets(total, attempts, score) {
+            statTotalSubmissions.textContent = total;
+            
+            const attemptsEl = document.getElementById('stat-simulator-attempts');
+            const scoreEl = document.getElementById('stat-empathy-score');
+            
+            if (attemptsEl) {
+                attemptsEl.textContent = attempts.toLocaleString();
+            }
+            if (scoreEl) {
+                scoreEl.textContent = `${score}%`;
+            }
+        }
+
+        // Render response rows
+        function renderSubmissionsTable(data) {
+            surveyTableBody.innerHTML = '';
+
+            if (!data || data.length === 0) {
+                surveyTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-8">No responses found in table database.</td></tr>`;
+                return;
+            }
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                const dateStr = new Date(row.created_at).toLocaleDateString(undefined, {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                tr.innerHTML = `
+                    <td><code>#${row.id}</code></td>
+                    <td class="text-muted" style="font-size:0.85rem">${dateStr}</td>
+                    <td>${escapeHTML(row.q1_answer || row.q1_response)}</td>
+                    <td>${escapeHTML(row.q2_answer || row.q2_response)}</td>
+                    <td style="text-align: center;">
+                        <button class="btn btn-secondary btn-sm delete-btn" data-id="${row.id}" style="color:var(--clr-error); border-color:rgba(220,38,38,0.2)">Delete</button>
+                    </td>
+                `;
+                surveyTableBody.appendChild(tr);
+            });
+
+            // Bind delete click actions
+            const deleteButtons = surveyTableBody.querySelectorAll('.delete-btn');
+            deleteButtons.forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = parseInt(e.target.dataset.id);
+                    if (confirm(`Are you sure you want to delete response #${id}?`)) {
+                        await deleteResponse(id);
+                    }
+                });
+            });
+        }
+
+        // Delete survey response record
+        async function deleteResponse(id) {
+            if (supabaseClient && !useMockData) {
+                try {
+                    const { error } = await supabaseClient
+                        .from('survey_responses')
+                        .delete()
+                        .eq('id', id);
+                    if (error) throw error;
+
+                    showToast(`Deleted response #${id} from Supabase.`);
+                    fetchSurveyResponses();
+                } catch (err) {
+                    alert('Failed to delete response: ' + err.message);
+                }
+            } else {
+                // Mock deletion locally
+                mockSurveyResponses = mockSurveyResponses.filter(item => item.id !== id);
+                showToast(`Deleted mock response #${id}.`);
+                fetchSurveyResponses();
+            }
+        }
+
+        // Fetch Resources from Supabase or Mock
+        async function fetchResources() {
+            if (supabaseClient && !useMockData) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('resources')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+
+                    if (error) throw error;
+                    renderResourcesDirectoryList(data);
+                } catch (err) {
+                    console.error('Error fetching resources:', err.message);
+                    // Fallback to mock data
+                    renderResourcesDirectoryList(mockResources);
+                }
+            } else {
+                renderResourcesDirectoryList(mockResources);
+            }
+        }
+
+        // Render list of files in directory
+        function renderResourcesDirectoryList(data) {
+            directoryList.innerHTML = '';
+
+            if (!data || data.length === 0) {
+                directoryList.innerHTML = `<li class="directory-item text-center py-4">No uploaded resources found.</li>`;
+                return;
+            }
+
+            data.forEach(res => {
+                const li = document.createElement('li');
+                li.className = 'directory-item';
+                li.innerHTML = `
+                    <div class="directory-info">
+                        <span class="file-icon">📄</span>
+                        <div class="file-text-details">
+                            <span class="file-name">${escapeHTML(res.title)}</span>
+                            <span class="file-meta">${escapeHTML(res.category)} • ${escapeHTML(res.size)}</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary btn-sm remove-resource-btn" data-id="${res.id}" style="color:var(--clr-error); padding: 4px 10px;">Remove</button>
+                `;
+                directoryList.appendChild(li);
+            });
+
+            // Bind remove button click
+            const removeButtons = directoryList.querySelectorAll('.remove-resource-btn');
+            removeButtons.forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = parseInt(e.target.dataset.id);
+                    if (confirm(`Are you sure you want to remove resource file?`)) {
+                        await removeResource(id);
+                    }
+                });
+            });
+        }
+
+        // Remove resource item
+        async function removeResource(id) {
+            if (supabaseClient && !useMockData) {
+                try {
+                    const { error } = await supabaseClient
+                        .from('resources')
+                        .delete()
+                        .eq('id', id);
+
+                    if (error) throw error;
+                    showToast('Resource file removed from Supabase.');
+                    fetchResources();
+                } catch (err) {
+                    alert('Failed to remove resource: ' + err.message);
+                }
+            } else {
+                mockResources = mockResources.filter(item => item.id !== id);
+                showToast('Resource file removed (mock).');
+                renderResourcesDirectoryList(mockResources);
+            }
+        }
+
+        // Resource submit form
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('resource-file');
+            const titleInput = document.getElementById('resource-title').value.trim();
+            const categorySelect = document.getElementById('resource-category');
+            const categoryText = categorySelect.options[categorySelect.selectedIndex].text;
+
+            const filename = fileInput.files[0] ? fileInput.files[0].name : "new_guide.pdf";
+            const sizeStr = fileInput.files[0] ? (fileInput.files[0].size / (1024 * 1024)).toFixed(2) + ' MB' : '1.2 MB';
+
+            if (supabaseClient && !useMockData) {
+                try {
+                    const { error } = await supabaseClient
+                        .from('resources')
+                        .insert([
+                            {
+                                id: Date.now(), // Generate a unique id based on timestamp
+                                title: titleInput + ' (' + filename + ')',
+                                category: categoryText,
+                                size: sizeStr
+                            }
+                        ]);
+                    if (error) throw error;
+
+                    showToast(`Published resource: "${titleInput}" to Supabase.`);
+                    uploadForm.reset();
+                    fetchResources();
+                } catch (err) {
+                    alert('Failed to save resource to database: ' + err.message);
+                }
+            } else {
+                const newRes = {
+                    id: Date.now(),
+                    title: titleInput + ' (' + filename + ')',
+                    category: categoryText,
+                    size: sizeStr
+                };
+                mockResources.push(newRes);
+                showToast(`Published resource: "${titleInput}" (mock)`);
+                uploadForm.reset();
+                renderResourcesDirectoryList(mockResources);
+            }
+        });
+
+        // Refresh database click action
+        refreshBtn.addEventListener('click', () => {
+            fetchSurveyResponses();
+            fetchResources();
+            showToast('Refreshed database tables.');
+        });
+
+        // Draw analytics chart using Chart.js
+        function buildAnalyticsChart(data) {
+            const ctx = document.getElementById('submissionsChart').getContext('2d');
+
+            // Group by dates
+            const dateCounts = {};
+            data.forEach(item => {
+                const dateStr = new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+                dateCounts[dateStr] = (dateCounts[dateStr] || 0) + 1;
+            });
+
+            const labels = Object.keys(dateCounts).reverse();
+            const counts = Object.values(dateCounts).reverse();
+
+            if (submissionsChart) {
+                submissionsChart.destroy();
+            }
+
+            // Chart styling using CSS variable equivalents
+            submissionsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels.length > 0 ? labels : ['Today'],
+                    datasets: [{
+                        label: 'Survey Submissions',
+                        data: counts.length > 0 ? counts : [0],
+                        borderColor: '#CD3E38', // Lighthouse Crimson Red
+                        backgroundColor: 'rgba(205, 62, 56, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.35,
+                        fill: true,
+                        pointBackgroundColor: '#CD3E38',
+                        pointBorderColor: '#FAF8F5',
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(203, 213, 225, 0.15)'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                color: '#526071'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#526071'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // HTML escaping helper function
+        function escapeHTML(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+    </script>
+</body>
+
+</html>
