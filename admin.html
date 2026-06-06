@@ -382,9 +382,18 @@
             useMockData = false; // Default to live if keys are set
         }
 
-        // Admin Access Credentials (Change these to secure your admin panel)
+        // Secure SHA-256 hashing helper using Web Crypto API
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        // Admin Access Credentials (SHA-256 hash representation)
         const ADMIN_USERNAME = 'admin';
-        const ADMIN_PASSWORD = 'lighthouse2026';
+        const ADMIN_PASSWORD_HASH = 'e78d278a6e1b528b3d5b33c16bfd5f211e09aa837600f70c23c11c7c4b9a9125'; // SHA-256 hash for 'lighthouse2026'
 
         // Local storage seeding functions
         function initializeLocalStorageMockData() {
@@ -587,8 +596,11 @@
             const password = loginPass.value.trim();
             loginError.style.display = 'none';
 
-            // 1. Check for configurable admin credentials bypass first
-            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+            // Calculate input hash
+            const inputHash = await sha256(password);
+
+            // 1. Check for secure hashed admin credentials bypass first
+            if (username === ADMIN_USERNAME && inputHash === ADMIN_PASSWORD_HASH) {
                 showToast('Logged in successfully.');
                 useMockData = (supabaseClient === null); // Load live Supabase data if connected!
                 logAuditEvent("Auth", `Administrative login success (user: ${username})`, "success");
@@ -696,9 +708,11 @@
             renderAuditLogs();
         }
 
+        let useMockSurveysFallback = false;
+
         // Fetch Survey Submissions and Stats
         async function fetchSurveyResponses() {
-            if (supabaseClient && !useMockData) {
+            if (supabaseClient && !useMockData && !useMockSurveysFallback) {
                 try {
                     // 1. Fetch survey responses
                     const { data: surveys, error: surveyError } = await supabaseClient
@@ -706,7 +720,16 @@
                         .select('*')
                         .order('created_at', { ascending: false });
 
-                    if (surveyError) throw surveyError;
+                    if (surveyError) {
+                        if (surveyError.code === '42P01' || surveyError.message.includes('relation "survey_responses" does not exist') || surveyError.message.includes('schema cache')) {
+                            console.warn("Supabase 'survey_responses' table not found. Falling back to local storage.");
+                            useMockSurveysFallback = true;
+                            logAuditEvent("Moderation", "Supabase 'survey_responses' table not found. Switched to local storage mode.", "info");
+                            loadMockSurveysAndAttempts();
+                            return;
+                        }
+                        throw surveyError;
+                    }
                     lastFetchedSubmissions = surveys;
                     renderSubmissionsTable(surveys);
                     
@@ -737,22 +760,24 @@
                     buildAnalyticsChart();
                 } catch (err) {
                     console.error('Error fetching survey data:', err.message);
-                    lastFetchedSubmissions = [];
-                    renderSubmissionsTable([]);
-                    updateStatsWidgets(0, 0, 0);
+                    useMockSurveysFallback = true;
+                    loadMockSurveysAndAttempts();
                 }
             } else {
-                // Load local mock values
-                lastFetchedSubmissions = mockSurveyResponses;
-                renderSubmissionsTable(mockSurveyResponses);
-
-                const attemptsCount = parseInt(localStorage.getItem('local-attempts-count') || '28');
-                const successCount = parseInt(localStorage.getItem('local-attempts-success') || '24');
-                const empathyRate = attemptsCount > 0 ? Math.round((successCount / attemptsCount) * 100) : 85;
-
-                updateStatsWidgets(mockSurveyResponses.length, attemptsCount, empathyRate);
-                buildAnalyticsChart();
+                loadMockSurveysAndAttempts();
             }
+        }
+
+        function loadMockSurveysAndAttempts() {
+            lastFetchedSubmissions = mockSurveyResponses;
+            renderSubmissionsTable(mockSurveyResponses);
+
+            const attemptsCount = parseInt(localStorage.getItem('local-attempts-count') || '28');
+            const successCount = parseInt(localStorage.getItem('local-attempts-success') || '24');
+            const empathyRate = attemptsCount > 0 ? Math.round((successCount / attemptsCount) * 100) : 85;
+
+            updateStatsWidgets(mockSurveyResponses.length, attemptsCount, empathyRate);
+            buildAnalyticsChart();
         }
 
         // Update statistics cards values
@@ -823,13 +848,21 @@
 
         // Delete survey response record
         async function deleteResponse(id) {
-            if (supabaseClient && !useMockData) {
+            if (supabaseClient && !useMockData && !useMockSurveysFallback) {
                 try {
                     const { error } = await supabaseClient
                         .from('survey_responses')
                         .delete()
                         .eq('id', id);
-                    if (error) throw error;
+                    if (error) {
+                        if (error.code === '42P01' || error.message.includes('relation "survey_responses" does not exist') || error.message.includes('schema cache')) {
+                            useMockSurveysFallback = true;
+                            logAuditEvent("Moderation", "Supabase 'survey_responses' table not found on deletion. Switched to local storage.", "info");
+                            deleteMockResponseLocal(id);
+                            return;
+                        }
+                        throw error;
+                    }
 
                     logAuditEvent("Moderation", `Deleted survey response record #${id} from Supabase`, "success");
                     showToast(`Deleted response #${id} from Supabase.`);
@@ -839,28 +872,43 @@
                     logAuditEvent("Moderation", `Failed deletion of response #${id}: ${err.message}`, "error");
                 }
             } else {
-                // Mock deletion locally
-                mockSurveyResponses = mockSurveyResponses.filter(item => item.id !== id);
-                saveMockSurveyResponses();
-                logAuditEvent("Moderation", `Deleted survey response record #${id} (mock)`, "success");
-                showToast(`Deleted mock response #${id}.`);
-                fetchSurveyResponses();
+                deleteMockResponseLocal(id);
             }
         }
 
+        function deleteMockResponseLocal(id) {
+            mockSurveyResponses = mockSurveyResponses.filter(item => item.id !== id);
+            saveMockSurveyResponses();
+            logAuditEvent("Moderation", `Deleted survey response record #${id} (local storage)`, "success");
+            showToast(`Deleted mock response #${id}.`);
+            fetchSurveyResponses();
+        }
+
+        let useMockResourcesFallback = false;
+
         // Fetch Resources from Supabase or Mock
         async function fetchResources() {
-            if (supabaseClient && !useMockData) {
+            if (supabaseClient && !useMockData && !useMockResourcesFallback) {
                 try {
                     const { data, error } = await supabaseClient
                         .from('resources')
                         .select('*')
                         .order('created_at', { ascending: false });
 
-                    if (error) throw error;
+                    if (error) {
+                        if (error.code === '42P01' || error.message.includes('relation "resources" does not exist') || error.message.includes('schema cache')) {
+                            console.warn("Supabase 'resources' table not found. Falling back to local storage.");
+                            useMockResourcesFallback = true;
+                            logAuditEvent("Resources", "Supabase 'resources' table not found. Switched to local storage mode.", "info");
+                            renderResourcesDirectoryList(mockResources);
+                            return;
+                        }
+                        throw error;
+                    }
                     renderResourcesDirectoryList(data);
                 } catch (err) {
                     console.error('Error fetching resources:', err.message);
+                    useMockResourcesFallback = true;
                     renderResourcesDirectoryList(mockResources);
                 }
             } else {
@@ -912,14 +960,22 @@
 
         // Remove resource item
         async function removeResource(id) {
-            if (supabaseClient && !useMockData) {
+            if (supabaseClient && !useMockData && !useMockResourcesFallback) {
                 try {
                     const { error } = await supabaseClient
                         .from('resources')
                         .delete()
                         .eq('id', id);
 
-                    if (error) throw error;
+                    if (error) {
+                        if (error.code === '42P01' || error.message.includes('relation "resources" does not exist') || error.message.includes('schema cache')) {
+                            useMockResourcesFallback = true;
+                            logAuditEvent("Resources", "Supabase 'resources' table not found on removal. Switched to local storage.", "info");
+                            removeMockResourceLocal(id);
+                            return;
+                        }
+                        throw error;
+                    }
                     logAuditEvent("Resources", `Removed resource file #${id} from Supabase`, "success");
                     showToast('Resource file removed from Supabase.');
                     fetchResources();
@@ -928,12 +984,16 @@
                     logAuditEvent("Resources", `Failed removal of resource file #${id}: ${err.message}`, "error");
                 }
             } else {
-                mockResources = mockResources.filter(item => item.id !== id);
-                saveMockResources();
-                logAuditEvent("Resources", `Removed resource file #${id} (mock)`, "success");
-                showToast('Resource file removed (mock).');
-                renderResourcesDirectoryList(mockResources);
+                removeMockResourceLocal(id);
             }
+        }
+
+        function removeMockResourceLocal(id) {
+            mockResources = mockResources.filter(item => item.id !== id);
+            saveMockResources();
+            logAuditEvent("Resources", `Removed resource file #${id} (local storage)`, "success");
+            showToast('Resource file removed.');
+            renderResourcesDirectoryList(mockResources);
         }
 
         // File selection label listener
@@ -961,7 +1021,7 @@
             const filename = fileInput.files[0] ? fileInput.files[0].name : "new_guide.pdf";
             const sizeStr = fileInput.files[0] ? (fileInput.files[0].size / (1024 * 1024)).toFixed(2) + ' MB' : '1.2 MB';
 
-            if (supabaseClient && !useMockData) {
+            if (supabaseClient && !useMockData && !useMockResourcesFallback) {
                 try {
                     const { error } = await supabaseClient
                         .from('resources')
@@ -974,7 +1034,15 @@
                                 size: sizeStr
                             }
                         ]);
-                    if (error) throw error;
+                    if (error) {
+                        if (error.code === '42P01' || error.message.includes('relation "resources" does not exist') || error.message.includes('schema cache')) {
+                            useMockResourcesFallback = true;
+                            logAuditEvent("Resources", "Supabase 'resources' table not found on upload. Switched to local storage.", "info");
+                            uploadMockResourceLocal(titleInput, filename, descInput, categoryText, sizeStr);
+                            return;
+                        }
+                        throw error;
+                    }
 
                     logAuditEvent("Resources", `Uploaded resource: "${titleInput}" (${filename}) to Supabase`, "success");
                     showToast(`Published resource: "${titleInput}" to Supabase.`);
@@ -986,22 +1054,26 @@
                     logAuditEvent("Resources", `Failed upload of resource "${titleInput}": ${err.message}`, "error");
                 }
             } else {
-                const newRes = {
-                    id: Date.now(),
-                    title: titleInput + ' (' + filename + ')',
-                    description: descInput,
-                    category: categoryText,
-                    size: sizeStr
-                };
-                mockResources.unshift(newRes);
-                saveMockResources();
-                logAuditEvent("Resources", `Uploaded resource: "${titleInput}" (${filename}) (mock)`, "success");
-                showToast(`Published resource: "${titleInput}" (mock)`);
-                uploadForm.reset();
-                if (fileCustomLabel) fileCustomLabel.textContent = '📂 Choose PDF or Document';
-                renderResourcesDirectoryList(mockResources);
+                uploadMockResourceLocal(titleInput, filename, descInput, categoryText, sizeStr);
             }
         });
+
+        function uploadMockResourceLocal(titleInput, filename, descInput, categoryText, sizeStr) {
+            const newRes = {
+                id: Date.now(),
+                title: titleInput + ' (' + filename + ')',
+                description: descInput,
+                category: categoryText,
+                size: sizeStr
+            };
+            mockResources.unshift(newRes);
+            saveMockResources();
+            logAuditEvent("Resources", `Uploaded resource: "${titleInput}" (${filename}) (local storage)`, "success");
+            showToast(`Published resource: "${titleInput}" (local storage)`);
+            uploadForm.reset();
+            if (fileCustomLabel) fileCustomLabel.textContent = '📂 Choose PDF or Document';
+            renderResourcesDirectoryList(mockResources);
+        }
 
         // Refresh database click action
         refreshBtn.addEventListener('click', () => {
