@@ -3465,12 +3465,19 @@ body.dark-mode .sm-reveal-card {
 }
 
 .arc-sector {
-    transition: stroke-width 0.3s;
+    transition: filter 0.3s;
 }
 
-.arc-sector.active {
-    stroke-width: 18px;
-    filter: drop-shadow(0 0 6px currentColor);
+.sm-arc-fixing.active {
+    filter: drop-shadow(0 0 8px #e63946);
+}
+
+.sm-arc-advising.active {
+    filter: drop-shadow(0 0 8px #ffb703);
+}
+
+.sm-arc-supporting.active {
+    filter: drop-shadow(0 0 8px #06d6a0);
 }
 
 .meter-text-indicator {
