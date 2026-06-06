@@ -22,6 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     loadDynamicMetrics();
 
+    // Listen for storage changes in other tabs to sync metrics instantly
+    window.addEventListener('storage', (e) => {
+        if (e.key && e.key.startsWith('metric-')) {
+            loadDynamicMetrics();
+        }
+    });
+
     /* ==========================================================================
        0. DARK/LIGHT MODE THEME SWITCHER
        ========================================================================== */
