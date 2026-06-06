@@ -29,6 +29,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Page View Tracker
+    function trackPageView() {
+        let views = localStorage.getItem('page-views');
+        views = views ? parseInt(views) + 1 : 1;
+        localStorage.setItem('page-views', views);
+        
+        let viewHistory = localStorage.getItem('page-view-history');
+        viewHistory = viewHistory ? JSON.parse(viewHistory) : [];
+        viewHistory.push(new Date().toISOString());
+        if (viewHistory.length > 100) viewHistory.shift();
+        localStorage.setItem('page-view-history', JSON.stringify(viewHistory));
+    }
+    trackPageView();
+
     /* ==========================================================================
        0. DARK/LIGHT MODE THEME SWITCHER
        ========================================================================== */
