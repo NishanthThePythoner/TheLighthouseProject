@@ -6,7 +6,7 @@ let supabaseClient = null;
 if (typeof supabase !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY') {
     supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
-
+document.addEventListener('DOMContentLoaded', () => {
     // Load dynamic statistics if saved in localStorage
     function loadDynamicMetrics() {
         for (let i = 1; i <= 4; i++) {
