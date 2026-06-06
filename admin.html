@@ -79,6 +79,7 @@
                 </div>
             </div>
             <div class="admin-actions">
+                <button class="btn btn-secondary btn-sm" id="theme-toggle-admin" aria-label="Toggle dark mode" style="padding: 8px 12px; font-size: 1.1rem; border-radius: 50%;">🌓</button>
                 <a href="index.html" class="btn btn-secondary btn-sm">View Website</a>
                 <button class="btn btn-primary btn-sm" id="logout-btn">Log Out</button>
             </div>
@@ -141,7 +142,13 @@
 
                     <!-- Chart Card -->
                     <div class="admin-chart-card card-content">
-                        <h3>Submissions Analytics</h3>
+                        <div class="chart-header-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <h3 id="chart-heading" style="margin-bottom: 0;">Analytics Overview</h3>
+                            <div class="chart-toggle-group" style="display: flex; gap: 8px;">
+                                <button class="btn btn-primary btn-sm" id="btn-chart-submissions" style="padding: 4px 12px; font-size: 0.8rem; border-radius: 12px;">Submissions</button>
+                                <button class="btn btn-secondary btn-sm" id="btn-chart-views" style="padding: 4px 12px; font-size: 0.8rem; border-radius: 12px;">Page Views</button>
+                            </div>
+                        </div>
                         <div class="chart-canvas-container">
                             <canvas id="submissionsChart"></canvas>
                         </div>
@@ -224,12 +231,15 @@
                 <div id="responses-section-wrapper" class="dashboard-section-block">
                     <h2 class="admin-section-heading" id="responses-anchor">Anonymous Survey Moderation</h2>
                     <div class="admin-table-card card-content">
-                        <div class="table-header-bar">
+                        <div class="table-header-bar" style="margin-bottom: 12px;">
                             <h3>Recorded User Responses</h3>
                             <div style="display: flex; gap: 8px;">
                                 <button class="btn btn-secondary btn-sm" id="export-csv-btn">📥 Export CSV</button>
                                 <button class="btn btn-secondary btn-sm" id="refresh-responses-btn">🔄 Refresh Data</button>
                             </div>
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <input type="text" id="survey-search-input" placeholder="🔍 Search responses by keyword..." style="width: 100%; max-width: 400px; padding: 10px 16px; border-radius: 20px; border: 1.5px solid var(--clr-border); background: var(--clr-choco-light); color: var(--clr-dark); outline: none; transition: border-color 0.2s;">
                         </div>
                         <div class="table-responsive-wrapper">
                             <table class="admin-moderation-table" id="survey-data-table">
@@ -296,6 +306,9 @@
 
                             <div class="upload-list-pane">
                                 <h3>Active Resource Directory</h3>
+                                <div style="margin-bottom: 12px;">
+                                    <input type="text" id="resource-search-input" placeholder="🔍 Filter resources by title..." style="width: 100%; padding: 8px 12px; border-radius: 12px; border: 1.5px solid var(--clr-border); background: var(--clr-choco-light); color: var(--clr-dark); font-size: 0.85rem; outline: none;">
+                                </div>
                                 <ul class="directory-list" id="resource-directory-list">
                                     <!-- Populated dynamically -->
                                     <li class="directory-item text-center py-4">No uploaded resources found.</li>
