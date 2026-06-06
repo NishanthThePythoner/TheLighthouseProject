@@ -409,11 +409,61 @@
             showToast('Logged out successfully.');
         });
 
+        // Website Metrics Configuration Defaults
+        const defaultMetrics = {
+            'metric-num-1': '90%',
+            'metric-lbl-1': 'Teens turn to friends first in crisis',
+            'metric-num-2': '3x',
+            'metric-lbl-2': 'More likely to share with a peer',
+            'metric-num-3': '0',
+            'metric-lbl-3': 'Clinical labeling or diagnoses',
+            'metric-num-4': '300+',
+            'metric-lbl-4': 'Support circles nationwide'
+        };
+
+        const editMetricsForm = document.getElementById('edit-metrics-form');
+        const resetMetricsBtn = document.getElementById('reset-metrics-btn');
+
+        function populateMetricsFields() {
+            for (let i = 1; i <= 4; i++) {
+                const savedNum = localStorage.getItem(`metric-num-${i}`);
+                const savedLbl = localStorage.getItem(`metric-lbl-${i}`);
+                
+                document.getElementById(`input-metric-num-${i}`).value = savedNum !== null ? savedNum : defaultMetrics[`metric-num-${i}`];
+                document.getElementById(`input-metric-lbl-${i}`).value = savedLbl !== null ? savedLbl : defaultMetrics[`metric-lbl-${i}`];
+            }
+        }
+
+        // Save Custom Metrics Handler
+        editMetricsForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            for (let i = 1; i <= 4; i++) {
+                const numVal = document.getElementById(`input-metric-num-${i}`).value.trim();
+                const lblVal = document.getElementById(`input-metric-lbl-${i}`).value.trim();
+                localStorage.setItem(`metric-num-${i}`, numVal);
+                localStorage.setItem(`metric-lbl-${i}`, lblVal);
+            }
+            showToast('Website metrics updated successfully!');
+        });
+
+        // Reset Custom Metrics Handler
+        resetMetricsBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to reset all metrics to default values?')) {
+                for (let i = 1; i <= 4; i++) {
+                    localStorage.removeItem(`metric-num-${i}`);
+                    localStorage.removeItem(`metric-lbl-${i}`);
+                }
+                populateMetricsFields();
+                showToast('Website metrics reset to default values.');
+            }
+        });
+
         // Initialize dashboard data
         function initializeDashboard() {
             loginScreen.style.display = 'none';
             dashboardPanel.style.display = 'block';
 
+            populateMetricsFields();
             fetchSurveyResponses();
             fetchResources();
         }
