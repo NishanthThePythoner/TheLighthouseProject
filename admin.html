@@ -304,6 +304,35 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Section 3: System Audit Activity Log -->
+                <div id="audit-section-wrapper" class="dashboard-section-block">
+                    <h2 class="admin-section-heading" id="audit-anchor">System Audit Activity Log</h2>
+                    <div class="admin-table-card card-content">
+                        <div class="table-header-bar">
+                            <h3>Administrative Action Log</h3>
+                            <button class="btn btn-secondary btn-sm" id="clear-audit-btn">🗑️ Clear Logs</button>
+                        </div>
+                        <div class="table-responsive-wrapper">
+                            <table class="admin-moderation-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 180px;">Timestamp</th>
+                                        <th style="width: 140px;">Module</th>
+                                        <th>Action Description</th>
+                                        <th style="width: 120px; text-align: center;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="audit-table-body">
+                                    <!-- Populated dynamically -->
+                                    <tr>
+                                        <td colspan="4" class="text-center py-8">No audit activities logged.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </section>
         </div>
     </main>
