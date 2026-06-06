@@ -7,7 +7,20 @@ if (typeof supabase !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL' && S
     supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+    // Load dynamic statistics if saved in localStorage
+    function loadDynamicMetrics() {
+        for (let i = 1; i <= 4; i++) {
+            const numVal = localStorage.getItem(`metric-num-${i}`);
+            const lblVal = localStorage.getItem(`metric-lbl-${i}`);
+            
+            const numElem = document.getElementById(`metric-num-${i}`);
+            const lblElem = document.getElementById(`metric-lbl-${i}`);
+            
+            if (numVal !== null && numElem) numElem.textContent = numVal;
+            if (lblVal !== null && lblElem) lblElem.textContent = lblVal;
+        }
+    }
+    loadDynamicMetrics();
 
     /* ==========================================================================
        0. DARK/LIGHT MODE THEME SWITCHER
