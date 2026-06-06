@@ -415,9 +415,9 @@
             }
             if (!localStorage.getItem('mock-resources')) {
                 const resources = [
-                    { id: 1, title: "Active Listening Guide.pdf", category: "Guides & Handbooks", size: "1.4 MB" },
-                    { id: 2, title: "Peer Support Toolkit.pdf", category: "Peer Support Toolkits", size: "3.2 MB" },
-                    { id: 3, title: "Crisis Intervention Infographic.pdf", category: "Infographics & Summaries", size: "850 KB" }
+                    { id: 1, title: "Active Listening Guide.pdf", category: "Guides & Handbooks", size: "1.4 MB", description: "Practical instructions on non-judgmental listening and boundary settings." },
+                    { id: 2, title: "Peer Support Toolkit.pdf", category: "Peer Support Toolkits", size: "3.2 MB", description: "Comprehensive exercises and checklists for starting peer support circles." },
+                    { id: 3, title: "Crisis Intervention Infographic.pdf", category: "Infographics & Summaries", size: "850 KB", description: "Quick reference card showing emotional distress signs and emergency contacts." }
                 ];
                 localStorage.setItem('mock-resources', JSON.stringify(resources));
             }
@@ -778,6 +778,10 @@
         // Render response rows
         function renderSubmissionsTable(data) {
             surveyTableBody.innerHTML = '';
+            const searchInput = document.getElementById('survey-search-input');
+            if (searchInput) {
+                searchInput.value = '';
+            }
 
             if (!data || data.length === 0) {
                 surveyTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-8">No responses found in table database.</td></tr>`;
@@ -867,6 +871,10 @@
         // Render list of files in directory
         function renderResourcesDirectoryList(data) {
             directoryList.innerHTML = '';
+            const searchInput = document.getElementById('resource-search-input');
+            if (searchInput) {
+                searchInput.value = '';
+            }
 
             if (!data || data.length === 0) {
                 directoryList.innerHTML = `<li class="directory-item text-center py-4">No uploaded resources found.</li>`;
@@ -880,8 +888,9 @@
                     <div class="directory-info">
                         <span class="file-icon">📄</span>
                         <div class="file-text-details">
-                            <span class="file-name">${escapeHTML(res.title)}</span>
-                            <span class="file-meta">${escapeHTML(res.category)} • ${escapeHTML(res.size)}</span>
+                            <span class="file-name" style="font-weight: 600;">${escapeHTML(res.title)}</span>
+                            <span class="file-desc" style="display: block; font-size: 0.8rem; color: var(--clr-muted); margin-top: 2px; margin-bottom: 4px;">${escapeHTML(res.description || 'No description provided')}</span>
+                            <span class="file-meta" style="font-size: 0.75rem;">${escapeHTML(res.category)} • ${escapeHTML(res.size)}</span>
                         </div>
                     </div>
                     <button class="btn btn-secondary btn-sm remove-resource-btn" data-id="${res.id}" style="color:var(--clr-error); padding: 4px 10px;">Remove</button>
@@ -927,11 +936,25 @@
             }
         }
 
+        // File selection label listener
+        const resourceFileInput = document.getElementById('resource-file');
+        const fileCustomLabel = document.querySelector('.file-custom-label');
+        if (resourceFileInput && fileCustomLabel) {
+            resourceFileInput.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                    fileCustomLabel.textContent = `📂 ${e.target.files[0].name}`;
+                } else {
+                    fileCustomLabel.textContent = '📂 Choose PDF or Document';
+                }
+            });
+        }
+
         // Resource submit form
         uploadForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const fileInput = document.getElementById('resource-file');
             const titleInput = document.getElementById('resource-title').value.trim();
+            const descInput = document.getElementById('resource-desc').value.trim();
             const categorySelect = document.getElementById('resource-category');
             const categoryText = categorySelect.options[categorySelect.selectedIndex].text;
 
@@ -946,6 +969,7 @@
                             {
                                 id: Date.now(), 
                                 title: titleInput + ' (' + filename + ')',
+                                description: descInput,
                                 category: categoryText,
                                 size: sizeStr
                             }
@@ -955,6 +979,7 @@
                     logAuditEvent("Resources", `Uploaded resource: "${titleInput}" (${filename}) to Supabase`, "success");
                     showToast(`Published resource: "${titleInput}" to Supabase.`);
                     uploadForm.reset();
+                    if (fileCustomLabel) fileCustomLabel.textContent = '📂 Choose PDF or Document';
                     fetchResources();
                 } catch (err) {
                     alert('Failed to save resource to database: ' + err.message);
@@ -964,6 +989,7 @@
                 const newRes = {
                     id: Date.now(),
                     title: titleInput + ' (' + filename + ')',
+                    description: descInput,
                     category: categoryText,
                     size: sizeStr
                 };
@@ -972,6 +998,7 @@
                 logAuditEvent("Resources", `Uploaded resource: "${titleInput}" (${filename}) (mock)`, "success");
                 showToast(`Published resource: "${titleInput}" (mock)`);
                 uploadForm.reset();
+                if (fileCustomLabel) fileCustomLabel.textContent = '📂 Choose PDF or Document';
                 renderResourcesDirectoryList(mockResources);
             }
         });
@@ -1172,8 +1199,9 @@
                 const items = document.querySelectorAll('#resource-directory-list .directory-item');
                 items.forEach(item => {
                     const nameText = item.querySelector('.file-name').textContent.toLowerCase();
+                    const descText = item.querySelector('.file-desc') ? item.querySelector('.file-desc').textContent.toLowerCase() : '';
                     const metaText = item.querySelector('.file-meta').textContent.toLowerCase();
-                    if (nameText.includes(query) || metaText.includes(query)) {
+                    if (nameText.includes(query) || descText.includes(query) || metaText.includes(query)) {
                         item.style.display = '';
                     } else {
                         item.style.display = 'none';
