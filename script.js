@@ -7,6 +7,17 @@ if (typeof supabase !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL' && S
     supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 document.addEventListener('DOMContentLoaded', () => {
+    // HTML escaping helper function
+    function escapeHTML(str) {
+        if (!str) return '';
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
     // Load dynamic statistics if saved in localStorage
     function loadDynamicMetrics() {
         for (let i = 1; i <= 4; i++) {
@@ -22,10 +33,164 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     loadDynamicMetrics();
 
-    // Listen for storage changes in other tabs to sync metrics instantly
+    // Helper functions for CMS injection
+    function safeUpdateText(id, text) {
+        const el = document.getElementById(id);
+        if (el && text !== undefined && text !== null) {
+            el.textContent = text;
+        }
+    }
+
+    function safeUpdateBullets(id, bulletsArray) {
+        const el = document.getElementById(id);
+        if (el && Array.isArray(bulletsArray)) {
+            el.innerHTML = '';
+            bulletsArray.forEach(text => {
+                const li = document.createElement('li');
+                li.textContent = text;
+                el.appendChild(li);
+            });
+        }
+    }
+
+    // Dynamic Website CMS Configuration loader
+    function applyDynamicCMSConfig() {
+        try {
+            const rawConfig = localStorage.getItem('lighthouse-cms-config');
+            if (!rawConfig) return;
+            const cmsConfig = JSON.parse(rawConfig);
+            if (!cmsConfig) return;
+
+            // Hero Customization
+            if (cmsConfig.hero) {
+                safeUpdateText('hero-title', cmsConfig.hero.title);
+                safeUpdateText('hero-tagline', cmsConfig.hero.tagline);
+                if (cmsConfig.hero.mottoPrefix !== undefined && cmsConfig.hero.mottoHighlight !== undefined) {
+                    const mottoEl = document.getElementById('hero-motto');
+                    if (mottoEl) {
+                        mottoEl.innerHTML = `${escapeHTML(cmsConfig.hero.mottoPrefix)} <span class="highlight-serif" id="hero-motto-highlight">${escapeHTML(cmsConfig.hero.mottoHighlight)}</span>`;
+                    }
+                }
+                safeUpdateText('hero-subtitle', cmsConfig.hero.subtitle);
+                safeUpdateText('hero-primary-cta', cmsConfig.hero.primaryCta);
+                safeUpdateText('hero-secondary-cta', cmsConfig.hero.secondaryCta);
+            }
+
+            // Core Pillars Customization
+            if (cmsConfig.pillars) {
+                safeUpdateText('pillars-section-title', cmsConfig.pillars.sectionTitle);
+                safeUpdateText('pillars-section-desc', cmsConfig.pillars.sectionDesc);
+                if (cmsConfig.pillars.pillar1) {
+                    safeUpdateText('pillar-1-title', cmsConfig.pillars.pillar1.title);
+                    safeUpdateText('pillar-1-desc', cmsConfig.pillars.pillar1.desc);
+                    safeUpdateBullets('pillar-1-bullets', cmsConfig.pillars.pillar1.bullets);
+                }
+                if (cmsConfig.pillars.pillar2) {
+                    safeUpdateText('pillar-2-title', cmsConfig.pillars.pillar2.title);
+                    safeUpdateText('pillar-2-desc', cmsConfig.pillars.pillar2.desc);
+                    safeUpdateBullets('pillar-2-bullets', cmsConfig.pillars.pillar2.bullets);
+                }
+                if (cmsConfig.pillars.pillar3) {
+                    safeUpdateText('pillar-3-title', cmsConfig.pillars.pillar3.title);
+                    safeUpdateText('pillar-3-desc', cmsConfig.pillars.pillar3.desc);
+                    safeUpdateBullets('pillar-3-bullets', cmsConfig.pillars.pillar3.bullets);
+                }
+            }
+
+            // Philosophy (Perspective Shift) Customization
+            if (cmsConfig.philosophy) {
+                safeUpdateText('philosophy-section-title', cmsConfig.philosophy.sectionTitle);
+                safeUpdateText('philosophy-section-desc', cmsConfig.philosophy.sectionDesc);
+                if (cmsConfig.philosophy.lighthouse) {
+                    contents.lighthouse = {
+                        ...contents.lighthouse,
+                        ...cmsConfig.philosophy.lighthouse
+                    };
+                }
+                if (cmsConfig.philosophy.traditional) {
+                    contents.traditional = {
+                        ...contents.traditional,
+                        ...cmsConfig.philosophy.traditional
+                    };
+                }
+                // Refresh perspective display mode in case it is loaded
+                const perspectiveBtn = document.getElementById('perspective-toggle-btn');
+                if (perspectiveBtn) {
+                    const isCurrentlyLighthouse = perspectiveBtn.classList.contains('switched');
+                    updatePerspective(isCurrentlyLighthouse ? 'lighthouse' : 'traditional');
+                }
+            }
+
+            // Simulator (WTRH) Section Title/Desc
+            if (cmsConfig.wtrh) {
+                safeUpdateText('wtrh-section-title', cmsConfig.wtrh.sectionTitle);
+                safeUpdateText('wtrh-section-desc', cmsConfig.wtrh.sectionDesc);
+            }
+
+            // Support Meter Section Title/Desc
+            if (cmsConfig.sm) {
+                safeUpdateText('sm-section-title', cmsConfig.sm.sectionTitle);
+                safeUpdateText('sm-section-desc', cmsConfig.sm.sectionDesc);
+            }
+
+            // Quiz Section Title/Desc
+            if (cmsConfig.quiz) {
+                safeUpdateText('quiz-section-title', cmsConfig.quiz.sectionTitle);
+                safeUpdateText('quiz-section-desc', cmsConfig.quiz.sectionDesc);
+            }
+
+            // Share Thoughts (Survey) Section Title/Desc
+            if (cmsConfig.survey) {
+                safeUpdateText('survey-section-title', cmsConfig.survey.sectionTitle);
+                safeUpdateText('survey-section-desc', cmsConfig.survey.sectionDesc);
+                if (cmsConfig.survey.q1Label) {
+                    const q1Lbl = document.querySelector('label[for="survey-q1"]');
+                    if (q1Lbl) q1Lbl.innerHTML = `${escapeHTML(cmsConfig.survey.q1Label)} <span class="required" aria-hidden="true">*</span>`;
+                }
+                if (cmsConfig.survey.q2Label) {
+                    const q2Lbl = document.querySelector('label[for="survey-q2"]');
+                    if (q2Lbl) q2Lbl.innerHTML = `${escapeHTML(cmsConfig.survey.q2Label)} <span class="required" aria-hidden="true">*</span>`;
+                }
+            }
+
+            // Contact Information Customization
+            if (cmsConfig.contact) {
+                safeUpdateText('contact-section-title', cmsConfig.contact.sectionTitle);
+                safeUpdateText('contact-section-text', cmsConfig.contact.sectionDesc);
+                const emailLink = document.getElementById('contact-email-link');
+                if (emailLink && cmsConfig.contact.email) {
+                    emailLink.href = `mailto:${cmsConfig.contact.email}`;
+                    emailLink.textContent = cmsConfig.contact.email;
+                }
+                const instaLink = document.getElementById('contact-instagram-link');
+                if (instaLink && cmsConfig.contact.instagram && cmsConfig.contact.instagramUrl) {
+                    instaLink.href = cmsConfig.contact.instagramUrl;
+                    instaLink.textContent = cmsConfig.contact.instagram;
+                }
+            }
+
+            // Game Level Variables Override
+            if (cmsConfig.scenarios) {
+                scenarios = cmsConfig.scenarios;
+            }
+            if (cmsConfig.smScenarios) {
+                smScenarios = cmsConfig.smScenarios;
+            }
+            if (cmsConfig.quizQuestions) {
+                quizQuestions = cmsConfig.quizQuestions;
+            }
+
+        } catch (e) {
+            console.error('Failed to parse or apply CMS dynamic config:', e);
+        }
+    }
+
+    // Listen for storage changes in other tabs to sync metrics and content instantly
     window.addEventListener('storage', (e) => {
         if (e.key && e.key.startsWith('metric-')) {
             loadDynamicMetrics();
+        } else if (e.key === 'lighthouse-cms-config') {
+            applyDynamicCMSConfig();
         }
     });
 
