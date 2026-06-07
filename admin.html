@@ -968,9 +968,9 @@
             return hashHex;
         }
 
-        // Admin Access Credentials (SHA-256 hash representation)
+        // Admin Access Credentials
         const ADMIN_USERNAME = 'admin';
-        const ADMIN_PASSWORD_HASH = 'e78d278a6e1b528b3d5b33c16bfd5f211e09aa837600f70c23c11c7c4b9a9125'; // SHA-256 hash for 'lighthouse2026'
+        const ADMIN_PASSWORD = 'lighthouse2026';
 
         // Local storage seeding functions
         function initializeLocalStorageMockData() {
@@ -1170,22 +1170,20 @@
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = loginEmail.value.trim();
-            const password = loginPass.value.trim();
+            const password = loginPass.value;
             loginError.style.display = 'none';
+            loginError.textContent = '';
 
-            // Calculate input hash
-            const inputHash = await sha256(password);
-
-            // 1. Check for secure hashed admin credentials bypass first
-            if (username === ADMIN_USERNAME && inputHash === ADMIN_PASSWORD_HASH) {
+            // 1. Direct admin credential check (fast, no async)
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
                 showToast('Logged in successfully.');
-                useMockData = (supabaseClient === null); // Load live Supabase data if connected!
+                useMockData = (supabaseClient === null);
                 logAuditEvent("Auth", `Administrative login success (user: ${username})`, "success");
                 initializeDashboard();
                 return;
             }
 
-            // 2. Otherwise, attempt live Supabase authentication
+            // 2. Attempt live Supabase authentication
             if (supabaseClient) {
                 try {
                     const { data, error } = await supabaseClient.auth.signInWithPassword({
@@ -1193,18 +1191,17 @@
                         password: password
                     });
                     if (error) throw error;
-
                     showToast('Logged in successfully via Supabase!');
-                    useMockData = false; // Set to false to fetch live responses
-                    logAuditEvent("Auth", `Administrative login success via Supabase (user: ${username})`, "success");
+                    useMockData = false;
+                    logAuditEvent("Auth", `Administrative login via Supabase (user: ${username})`, "success");
                     initializeDashboard();
                 } catch (err) {
                     loginError.textContent = 'Auth Error: ' + err.message;
                     loginError.style.display = 'block';
-                    logAuditEvent("Auth", `Failed login attempt (user: ${username}): ${err.message}`, "error");
+                    logAuditEvent("Auth", `Failed login attempt (user: ${username})`, "error");
                 }
             } else {
-                loginError.textContent = 'Invalid credentials. Hint: use admin / lighthouse2026';
+                loginError.textContent = 'Invalid credentials. Use: admin / lighthouse2026';
                 loginError.style.display = 'block';
                 logAuditEvent("Auth", `Failed login attempt (user: ${username})`, "error");
             }
