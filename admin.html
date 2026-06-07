@@ -953,7 +953,7 @@
         let useMockData = true; // Default to true until a live login succeeds
 
         // Initialize Supabase if keys are set
-        if (SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY') {
+        if (typeof supabase !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY') {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             useMockData = false; // Default to live if keys are set
         }
@@ -1735,6 +1735,10 @@
 
         // Draw analytics chart using Chart.js
         function buildAnalyticsChart() {
+            if (typeof Chart === 'undefined') {
+                console.warn("Chart.js is not loaded. Cannot display analytics graph.");
+                return;
+            }
             const chartCanvas = document.getElementById('submissionsChart');
             if (!chartCanvas) return;
             const ctx = chartCanvas.getContext('2d');
