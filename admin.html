@@ -426,14 +426,17 @@
                                     <tr>
                                         <th style="width: 80px;">ID</th>
                                         <th style="width: 150px;">Submitted At</th>
-                                        <th>Q1: What we wish people understood about peer support</th>
-                                        <th>Q2: What helps teenagers reach out for support</th>
+                                        <th id="th-q-lbl-1">Q1</th>
+                                        <th id="th-q-lbl-2">Q2</th>
+                                        <th id="th-q-lbl-3">Q3</th>
+                                        <th id="th-q-lbl-4">Q4</th>
+                                        <th id="th-q-lbl-5">Q5</th>
                                         <th style="width: 100px; text-align: center;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="survey-table-body">
                                     <tr>
-                                        <td colspan="5" class="text-center py-8">Fetching submissions...</td>
+                                        <td colspan="8" class="text-center py-8">Fetching submissions...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -755,9 +758,21 @@
                                         <label for="cms-survey-q1-label">Question 1 Label</label>
                                         <input type="text" id="cms-survey-q1-label" required>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group" style="margin-bottom: 16px;">
                                         <label for="cms-survey-q2-label">Question 2 Label</label>
                                         <input type="text" id="cms-survey-q2-label" required>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 16px;">
+                                        <label for="cms-survey-q3-label">Question 3 Label</label>
+                                        <input type="text" id="cms-survey-q3-label" required>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 16px;">
+                                        <label for="cms-survey-q4-label">Question 4 Label</label>
+                                        <input type="text" id="cms-survey-q4-label" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cms-survey-q5-label">Question 5 Label</label>
+                                        <input type="text" id="cms-survey-q5-label" required>
                                     </div>
                                 </div>
                             </div>
@@ -1085,10 +1100,10 @@
             }
             if (!localStorage.getItem('mock-survey-responses')) {
                 const responses = [
-                    { id: 101, created_at: new Date(Date.now() - 3600000 * 24 * 4).toISOString(), q1_answer: "Peer support is about connection, not fixing someone.", q2_answer: "Knowing that they won't be judged by their peers." },
-                    { id: 102, created_at: new Date(Date.now() - 3600000 * 24 * 3).toISOString(), q1_answer: "It creates a safe space where lived experience is valued.", q2_answer: "Seeing other teens speak openly about their mental health." },
-                    { id: 103, created_at: new Date(Date.now() - 3600000 * 24 * 2).toISOString(), q1_answer: "We are not therapists, we are companions on the journey.", q2_answer: "Easy-to-access digital spaces and absolute anonymity." },
-                    { id: 104, created_at: new Date(Date.now() - 3600000 * 12).toISOString(), q1_answer: "It helps reduce the clinical feeling of mental health support.", q2_answer: "Understanding that it's okay to not be okay, shared by peers." }
+                    { id: 101, created_at: new Date(Date.now() - 3600000 * 24 * 4).toISOString(), q1_answer: "Peer support is about connection, not fixing someone.", q2_answer: "Knowing that they won't be judged by their peers.", q3_answer: "Fear of saying the wrong thing and making it worse.", q4_answer: "Social media or school counselors.", q5_answer: "Active listening and handling panic attacks." },
+                    { id: 102, created_at: new Date(Date.now() - 3600000 * 24 * 3).toISOString(), q1_answer: "It creates a safe space where lived experience is valued.", q2_answer: "Seeing other teens speak openly about their mental health.", q3_answer: "Not knowing how to bring up the subject naturally.", q4_answer: "YouTube and online psychology blogs.", q5_answer: "Roleplay on boundary setting." },
+                    { id: 103, created_at: new Date(Date.now() - 3600000 * 24 * 2).toISOString(), q1_answer: "We are not therapists, we are companions on the journey.", q2_answer: "Easy-to-access digital spaces and absolute anonymity.", q3_answer: "Feeling overwhelmed by the weight of their friend's problems.", q4_answer: "Mental health NGOs and peer guides.", q5_answer: "Workshops on stress management." },
+                    { id: 104, created_at: new Date(Date.now() - 3600000 * 12).toISOString(), q1_answer: "It helps reduce the clinical feeling of mental health support.", q2_answer: "Understanding that it's okay to not be okay, shared by peers.", q3_answer: "Pressure from parents or teachers to focus on studies first.", q4_answer: "Instagram awareness pages.", q5_answer: "Peer group facilitating skills." }
                 ];
                 localStorage.setItem('mock-survey-responses', JSON.stringify(responses));
             }
@@ -1533,8 +1548,21 @@
                 searchInput.value = '';
             }
 
+            // Update column headers dynamically based on config
+            const cfg = activeCmsConfig || cmsDefaults;
+            if (cfg && cfg.survey) {
+                for (let i = 1; i <= 5; i++) {
+                    const th = document.getElementById(`th-q-lbl-${i}`);
+                    if (th) {
+                        const lbl = cfg.survey[`q${i}Label`] || `Question ${i}`;
+                        th.textContent = `Q${i}: ${lbl.length > 50 ? lbl.substring(0, 47) + '...' : lbl}`;
+                        th.title = lbl;
+                    }
+                }
+            }
+
             if (!data || data.length === 0) {
-                surveyTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-8">No responses found in table database.</td></tr>`;
+                surveyTableBody.innerHTML = `<tr><td colspan="8" class="text-center py-8">No responses found in table database.</td></tr>`;
                 return;
             }
 
@@ -1550,8 +1578,11 @@
                 tr.innerHTML = `
                     <td><code>#${row.id}</code></td>
                     <td class="text-muted" style="font-size:0.85rem">${dateStr}</td>
-                    <td>${escapeHTML(row.q1_answer || row.q1_response)}</td>
-                    <td>${escapeHTML(row.q2_answer || row.q2_response)}</td>
+                    <td>${escapeHTML(row.q1_answer || row.q1_response || '')}</td>
+                    <td>${escapeHTML(row.q2_answer || row.q2_response || '')}</td>
+                    <td>${escapeHTML(row.q3_answer || row.q3_response || '')}</td>
+                    <td>${escapeHTML(row.q4_answer || row.q4_response || '')}</td>
+                    <td>${escapeHTML(row.q5_answer || row.q5_response || '')}</td>
                     <td style="text-align: center;">
                         <button class="btn btn-secondary btn-sm delete-btn" data-id="${row.id}" style="color:var(--clr-error); border-color:rgba(220,38,38,0.2)">Delete</button>
                     </td>
@@ -1818,14 +1849,23 @@
                     return;
                 }
 
-                let csvContent = "ID,Timestamp,Q1: What we wish people understood about peer support,Q2: What helps teenagers reach out for support\n";
+                const q1LblText = (activeCmsConfig && activeCmsConfig.survey && activeCmsConfig.survey.q1Label) || "Q1";
+                const q2LblText = (activeCmsConfig && activeCmsConfig.survey && activeCmsConfig.survey.q2Label) || "Q2";
+                const q3LblText = (activeCmsConfig && activeCmsConfig.survey && activeCmsConfig.survey.q3Label) || "Q3";
+                const q4LblText = (activeCmsConfig && activeCmsConfig.survey && activeCmsConfig.survey.q4Label) || "Q4";
+                const q5LblText = (activeCmsConfig && activeCmsConfig.survey && activeCmsConfig.survey.q5Label) || "Q5";
+
+                let csvContent = `ID,Timestamp,"Q1: ${q1LblText.replace(/"/g, '""')}","Q2: ${q2LblText.replace(/"/g, '""')}","Q3: ${q3LblText.replace(/"/g, '""')}","Q4: ${q4LblText.replace(/"/g, '""')}","Q5: ${q5LblText.replace(/"/g, '""')}"\n`;
 
                 dataToExport.forEach(row => {
                     const id = row.id;
                     const timestamp = new Date(row.created_at).toISOString();
                     const q1 = `"${(row.q1_answer || row.q1_response || '').replace(/"/g, '""')}"`;
                     const q2 = `"${(row.q2_answer || row.q2_response || '').replace(/"/g, '""')}"`;
-                    csvContent += `${id},${timestamp},${q1},${q2}\n`;
+                    const q3 = `"${(row.q3_answer || row.q3_response || '').replace(/"/g, '""')}"`;
+                    const q4 = `"${(row.q4_answer || row.q4_response || '').replace(/"/g, '""')}"`;
+                    const q5 = `"${(row.q5_answer || row.q5_response || '').replace(/"/g, '""')}"`;
+                    csvContent += `${id},${timestamp},${q1},${q2},${q3},${q4},${q5}\n`;
                 });
 
                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -1980,10 +2020,15 @@
                 const query = e.target.value.toLowerCase().trim();
                 const rows = document.querySelectorAll('#survey-table-body tr');
                 rows.forEach(row => {
-                    if (row.cells.length < 5) return; 
-                    const q1Text = row.cells[2].textContent.toLowerCase();
-                    const q2Text = row.cells[3].textContent.toLowerCase();
-                    if (q1Text.includes(query) || q2Text.includes(query)) {
+                    if (row.cells.length < 8) return; 
+                    let found = false;
+                    for (let c = 2; c < row.cells.length - 1; c++) {
+                        if (row.cells[c].textContent.toLowerCase().includes(query)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found) {
                         row.style.display = '';
                     } else {
                         row.style.display = 'none';
@@ -2075,7 +2120,10 @@
                 sectionTitle: "Share Your Thoughts",
                 sectionDesc: "Your input helps us understand teen mental health dynamics and shape peer-support strategies. Responses are 100% anonymous and no personal details are tracked.",
                 q1Label: "1. What is one thing you wish more people understood about supporting a friend who is struggling emotionally?",
-                q2Label: "2. What would help teenagers feel more comfortable reaching out for support when they need it?"
+                q2Label: "2. What would help teenagers feel more comfortable reaching out for support when they need it?",
+                q3Label: "3. What are the biggest barriers or challenges you face when trying to support a friend in distress?",
+                q4Label: "4. Where do you usually go to find information or resources on mental health and peer support?",
+                q5Label: "5. What kind of training or workshops would you like to see to feel more equipped to help others?"
             },
             contact: {
                 sectionTitle: "Contact Us",
@@ -2979,6 +3027,9 @@
                 document.getElementById('cms-survey-section-desc').value = cfg.survey.sectionDesc || '';
                 document.getElementById('cms-survey-q1-label').value = cfg.survey.q1Label || '';
                 document.getElementById('cms-survey-q2-label').value = cfg.survey.q2Label || '';
+                document.getElementById('cms-survey-q3-label').value = cfg.survey.q3Label || '';
+                document.getElementById('cms-survey-q4-label').value = cfg.survey.q4Label || '';
+                document.getElementById('cms-survey-q5-label').value = cfg.survey.q5Label || '';
             }
             if (cfg.wtrh) {
                 document.getElementById('cms-wtrh-section-title').value = cfg.wtrh.sectionTitle;
@@ -3441,6 +3492,9 @@
             cfg.survey.sectionDesc = document.getElementById('cms-survey-section-desc').value.trim();
             cfg.survey.q1Label = document.getElementById('cms-survey-q1-label').value.trim();
             cfg.survey.q2Label = document.getElementById('cms-survey-q2-label').value.trim();
+            cfg.survey.q3Label = document.getElementById('cms-survey-q3-label').value.trim();
+            cfg.survey.q4Label = document.getElementById('cms-survey-q4-label').value.trim();
+            cfg.survey.q5Label = document.getElementById('cms-survey-q5-label').value.trim();
             
             cfg.wtrh.sectionTitle = document.getElementById('cms-wtrh-section-title').value.trim();
             cfg.wtrh.sectionDesc = document.getElementById('cms-wtrh-section-desc').value.trim();
