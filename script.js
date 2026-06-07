@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const perspectiveList = document.getElementById('perspective-list');
     const perspectiveVisual = document.getElementById('perspective-visual-container');
 
-    const contents = {
+    let contents = {
         lighthouse: {
             subtitle: "The Lighthouse Model",
             title: "Empowering the surrounding peer community",
@@ -505,7 +505,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const completionExitBtn = document.getElementById('completion-exit-btn');
 
     // Scenario Script Data
-    const scenarios = {
+    let scenarios = {
         1: {
             friendName: "Aarav",
             relation: "Classmate & Cricket Friend",
@@ -1484,7 +1484,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultScore = document.getElementById('result-score');
     const resultDesc = document.getElementById('result-desc');
 
-    const quizQuestions = [
+    let quizQuestions = [
         {
             q: "Your friend tells you they've been feeling extremely down lately. What is the most supportive initial response?",
             a: [
@@ -1723,7 +1723,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ==========================================================================
        9. THE SUPPORT METER - INTERACTIVE GAME ENGINE
        ========================================================================== */
-    const smScenarios = {
+    let smScenarios = {
         1: {
             friendName: "Sameer",
             avatar: "👤",
@@ -2206,6 +2206,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (smReplayAllBtn) {
         smReplayAllBtn.addEventListener('click', smStartGame);
     }
+
+    // Apply customized content overrides before starting game engines
+    applyDynamicCMSConfig();
 
     // Auto-init Support Meter Game on load
     smStartGame();
