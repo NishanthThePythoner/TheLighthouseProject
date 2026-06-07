@@ -4,7 +4,15 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 let supabaseClient = null;
 
 if (typeof supabase !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY') {
-    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    try {
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+            auth: {
+                persistSession: false // Disable session persistence to avoid localStorage exceptions in strict privacy mode
+            }
+        });
+    } catch (e) {
+        console.warn('Supabase client initialization failed, running in local fallback mode:', e);
+    }
 }
 document.addEventListener('DOMContentLoaded', () => {
     // HTML escaping helper function
