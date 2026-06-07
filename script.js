@@ -10,9 +10,12 @@ if (typeof supabase !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL' && S
                 persistSession: false // Disable session persistence to avoid localStorage exceptions in strict privacy mode
             }
         });
+        console.log("Supabase client initialized successfully.");
     } catch (e) {
         console.warn('Supabase client initialization failed, running in local fallback mode:', e);
     }
+} else {
+    console.warn("Supabase SDK is not loaded or credentials are not set. Database sync is disabled. typeof supabase:", typeof supabase);
 }
 document.addEventListener('DOMContentLoaded', () => {
     // HTML escaping helper function
