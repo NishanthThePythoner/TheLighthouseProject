@@ -934,7 +934,6 @@
 
     <!-- Script logic -->
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
         // Theme initialization
         const initTheme = () => {
             const savedTheme = localStorage.getItem('theme');
@@ -1167,10 +1166,10 @@
         }
 
         // Login Handler
-        loginForm.addEventListener('submit', async (e) => {
+        if (loginForm) loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const username = loginEmail.value.trim();
-            const password = loginPass.value;
+            const username = (loginEmail ? loginEmail.value.trim() : '');
+            const password = (loginPass ? loginPass.value : '');
             loginError.style.display = 'none';
             loginError.textContent = '';
 
@@ -3410,7 +3409,6 @@
                 showToast("CMS custom configs reset to standard system defaults.");
             }
         }
-    }); // end DOMContentLoaded
     </script>
 </body>
 
