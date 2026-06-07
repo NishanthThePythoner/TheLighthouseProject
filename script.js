@@ -211,6 +211,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 smScenarios = cmsConfig.smScenarios;
             }
 
+            // Metrics Customization
+            if (cmsConfig.metrics) {
+                for (let i = 1; i <= 4; i++) {
+                    const numVal = cmsConfig.metrics[`metric-num-${i}`];
+                    const lblVal = cmsConfig.metrics[`metric-lbl-${i}`];
+                    
+                    const numElem = document.getElementById(`metric-num-${i}`);
+                    const lblElem = document.getElementById(`metric-lbl-${i}`);
+                    
+                    if (numVal !== undefined && numVal !== null && numElem) numElem.textContent = numVal;
+                    if (lblVal !== undefined && lblVal !== null && lblElem) lblElem.textContent = lblVal;
+                }
+            }
+
         } catch (e) {
             console.error('Failed to parse or apply CMS dynamic config:', e);
         }
