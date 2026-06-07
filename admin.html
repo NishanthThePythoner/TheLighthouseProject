@@ -1329,36 +1329,93 @@
         const resetMetricsBtn = document.getElementById('reset-metrics-btn');
 
         function populateMetricsFields() {
+            // Read from activeCmsConfig.metrics first, then legacy localStorage, then defaults
+            const cfgMetrics = (activeCmsConfig && activeCmsConfig.metrics) ? activeCmsConfig.metrics : {};
             for (let i = 1; i <= 4; i++) {
-                const savedNum = localStorage.getItem(`metric-num-${i}`);
-                const savedLbl = localStorage.getItem(`metric-lbl-${i}`);
-                
-                document.getElementById(`input-metric-num-${i}`).value = savedNum !== null ? savedNum : defaultMetrics[`metric-num-${i}`];
-                document.getElementById(`input-metric-lbl-${i}`).value = savedLbl !== null ? savedLbl : defaultMetrics[`metric-lbl-${i}`];
+                const legacyNum = localStorage.getItem(`metric-num-${i}`);
+                const legacyLbl = localStorage.getItem(`metric-lbl-${i}`);
+
+                const numVal = cfgMetrics[`metric-num-${i}`] !== undefined ? cfgMetrics[`metric-num-${i}`] : (legacyNum !== null ? legacyNum : defaultMetrics[`metric-num-${i}`]);
+                const lblVal = cfgMetrics[`metric-lbl-${i}`] !== undefined ? cfgMetrics[`metric-lbl-${i}`] : (legacyLbl !== null ? legacyLbl : defaultMetrics[`metric-lbl-${i}`]);
+
+                document.getElementById(`input-metric-num-${i}`).value = numVal;
+                document.getElementById(`input-metric-lbl-${i}`).value = lblVal;
+
+                // Sync back to localStorage for immediate UI updates
+                localStorage.setItem(`metric-num-${i}`, numVal);
+                localStorage.setItem(`metric-lbl-${i}`, lblVal);
             }
         }
 
         // Save Custom Metrics Handler
         editMetricsForm.addEventListener('submit', (e) => {
             e.preventDefault();
+            if (!activeCmsConfig) {
+                activeCmsConfig = { ...cmsDefaults };
+            }
+            activeCmsConfig.metrics = activeCmsConfig.metrics || {};
             for (let i = 1; i <= 4; i++) {
                 const numVal = document.getElementById(`input-metric-num-${i}`).value.trim();
                 const lblVal = document.getElementById(`input-metric-lbl-${i}`).value.trim();
+                
+                // Save locally
                 localStorage.setItem(`metric-num-${i}`, numVal);
                 localStorage.setItem(`metric-lbl-${i}`, lblVal);
+
+                // Save to active CMS config object
+                activeCmsConfig.metrics[`metric-num-${i}`] = numVal;
+                activeCmsConfig.metrics[`metric-lbl-${i}`] = lblVal;
             }
-            logAuditEvent("Metrics", "Website dashboard metrics edited & saved", "success");
+
+            // Save activeCmsConfig to local storage
+            localStorage.setItem('lighthouse-cms-config', JSON.stringify(activeCmsConfig));
+
+            // Sync to Supabase if connected
+            if (supabaseClient && !useMockData) {
+                supabaseClient
+                    .from('cms_config')
+                    .upsert({ id: 1, config: activeCmsConfig, updated_at: new Date().toISOString() }, { onConflict: 'id' })
+                    .then(({ error }) => {
+                        if (error) {
+                            console.error('CMS Metrics Supabase sync failed:', error.message);
+                            logAuditEvent("Metrics", `Failed to sync metrics to Supabase: ${error.message}`, "error");
+                        } else {
+                            logAuditEvent("Metrics", "Website dashboard metrics synced to Supabase cloud", "success");
+                        }
+                    });
+            }
+
+            logAuditEvent("Metrics", "Website dashboard metrics edited & saved locally", "success");
             showToast('Website metrics updated successfully!');
         });
 
         // Reset Custom Metrics Handler
         resetMetricsBtn.addEventListener('click', () => {
             if (confirm('Are you sure you want to reset all metrics to default values?')) {
+                if (!activeCmsConfig) {
+                    activeCmsConfig = { ...cmsDefaults };
+                }
+                activeCmsConfig.metrics = { ...cmsDefaults.metrics };
+                
                 for (let i = 1; i <= 4; i++) {
                     localStorage.removeItem(`metric-num-${i}`);
                     localStorage.removeItem(`metric-lbl-${i}`);
                 }
                 populateMetricsFields();
+
+                // Save and Sync reset state
+                localStorage.setItem('lighthouse-cms-config', JSON.stringify(activeCmsConfig));
+                if (supabaseClient && !useMockData) {
+                    supabaseClient
+                        .from('cms_config')
+                        .upsert({ id: 1, config: activeCmsConfig, updated_at: new Date().toISOString() }, { onConflict: 'id' })
+                        .then(({ error }) => {
+                            if (error) {
+                                console.error('CMS Metrics Supabase sync failed on reset:', error.message);
+                            }
+                        });
+                }
+
                 logAuditEvent("Metrics", "Website dashboard metrics reset to defaults", "info");
                 showToast('Website metrics reset to default values.');
             }
