@@ -2145,9 +2145,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log("Supabase CMS config loaded successfully:", data.config);
                     localStorage.setItem('lighthouse-cms-config', JSON.stringify(data.config));
                     applyDynamicCMSConfig();
-                    if (typeof smStartGame === 'function') {
-                        smStartGame();
-                    }
                 } else {
                     console.warn("Supabase CMS load query returned no data.");
                 }
