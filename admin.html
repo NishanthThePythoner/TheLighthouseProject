@@ -2713,7 +2713,10 @@
                             .select('config')
                             .eq('id', 1)
                             .single();
-                        if (!error && data && data.config) {
+                        if (error) {
+                            console.error('Supabase CMS load query failed:', error.message, error.details, error.hint);
+                            logAuditEvent("CMS", `Failed to load CMS config: ${error.message}`, "error");
+                        } else if (data && data.config) {
                             activeCmsConfig = { ...cmsDefaults, ...data.config };
                             localStorage.setItem('lighthouse-cms-config', JSON.stringify(activeCmsConfig));
                             logAuditEvent("CMS", "CMS config loaded from Supabase cloud", "info");
