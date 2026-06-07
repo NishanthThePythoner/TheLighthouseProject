@@ -521,7 +521,7 @@
                         <div class="cms-tabs-nav" style="display: flex; border-bottom: 2px solid var(--clr-border); margin-bottom: 24px; overflow-x: auto; gap: 8px; padding-bottom: 4px;">
                             <button type="button" class="cms-tab-btn active" data-tab="cms-hero-pillars">Hero & Pillars</button>
                             <button type="button" class="cms-tab-btn" data-tab="cms-philosophy-contact">Philosophy & Contact</button>
-                            <button type="button" class="cms-tab-btn" data-tab="cms-quiz">Instincts Quiz</button>
+                            <button type="button" class="cms-tab-btn" data-tab="cms-survey">Survey Settings</button>
                             <button type="button" class="cms-tab-btn" data-tab="cms-simulator">Simulator Levels</button>
                             <button type="button" class="cms-tab-btn" data-tab="cms-meter">Support Meter Scenarios</button>
                         </div>
@@ -735,25 +735,29 @@
                                 </div>
                             </div>
 
-                            <!-- Tab 3: Instincts Quiz -->
-                            <div class="cms-tab-content" id="cms-quiz" style="display: none;">
+                            <!-- Tab 3: Survey Settings -->
+                            <div class="cms-tab-content" id="cms-survey" style="display: none;">
                                 <div class="cms-form-section">
-                                    <h4 class="cms-form-section-title">Self Assessment Headers</h4>
+                                    <h4 class="cms-form-section-title">Survey Section Headers</h4>
                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
                                         <div class="form-group">
-                                            <label for="cms-quiz-section-title">Quiz Section Title</label>
-                                            <input type="text" id="cms-quiz-section-title" required>
+                                            <label for="cms-survey-section-title">Section Title</label>
+                                            <input type="text" id="cms-survey-section-title" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="cms-quiz-section-desc">Quiz Section Description</label>
-                                            <input type="text" id="cms-quiz-section-desc" required>
+                                            <label for="cms-survey-section-desc">Section Description</label>
+                                            <input type="text" id="cms-survey-section-desc" required>
                                         </div>
                                     </div>
 
-                                    <h4 class="cms-form-section-title">Quiz Questions & Feedback</h4>
-                                    <div id="cms-quiz-questions-container">
-                                        <!-- Rendered dynamically by javascript -->
-                                        <p class="text-center py-4">Generating quiz editor...</p>
+                                    <h4 class="cms-form-section-title">Survey Questions</h4>
+                                    <div class="form-group" style="margin-bottom: 16px;">
+                                        <label for="cms-survey-q1-label">Question 1 Label</label>
+                                        <input type="text" id="cms-survey-q1-label" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cms-survey-q2-label">Question 2 Label</label>
+                                        <input type="text" id="cms-survey-q2-label" required>
                                     </div>
                                 </div>
                             </div>
@@ -2005,10 +2009,6 @@
                 sectionTitle: "What They Really Heard",
                 sectionDesc: "Every response carries an intention. Explore how your words can land differently depending on a friend's emotional state, and learn to navigate the nuance of support."
             },
-            quiz: {
-                sectionTitle: "Are you a Lighthouse Friend?",
-                sectionDesc: "Find out how emotionally aware you are of your peers. Learn key insights on listening, establishing healthy boundaries, and understanding teen psychology."
-            },
             survey: {
                 sectionTitle: "Share Your Thoughts",
                 sectionDesc: "Your input helps us understand teen mental health dynamics and shape peer-support strategies. Responses are 100% anonymous and no personal details are tracked.",
@@ -2022,40 +2022,6 @@
                 instagram: "@thelighthouseproject2026",
                 instagramUrl: "https://instagram.com/thelighthouseproject2026"
             },
-            quizQuestions: [
-                {
-                    q: "Your friend tells you they've been feeling extremely down lately. What is the most supportive initial response?",
-                    a: [
-                        { text: "Don't worry! You have so much to be happy about. Let's go watch a movie to cheer you up.", correct: false, feedback: "This dismisses their feelings and rushes into a distraction. Listening is key." },
-                        { text: "I'm really sorry you're going through this. Thank you for sharing it with me. I'm here for you.", correct: true, feedback: "Excellent. This validates their feelings and builds deep emotional safety immediately." },
-                        { text: "Have you tried looking at the positive side? I think you just need to get out of the house.", correct: false, feedback: "This borders on lecturing and minimizes the complexity of mental distress." }
-                    ]
-                },
-                {
-                    q: "What is the primary difference between 'Supporting' and 'Solving' a peer's emotional distress?",
-                    a: [
-                        { text: "Supporting means taking action, while solving means listening.", correct: false, feedback: "Incorrect. The roles are actually reversed in practice." },
-                        { text: "Supporting means validating their feelings and walking alongside them; solving means trying to diagnose the issue and giving immediate advice.", correct: true, feedback: "Spot on! The goal is support (being present) not solving (acting as a therapist)." },
-                        { text: "Supporting is for close friends; solving is what school counselors do.", correct: false, feedback: "School counselors support and guide, they don't treat teens like mechanical problems." }
-                    ]
-                },
-                {
-                    q: "A friend says they are feeling overwhelmed. At what point should you definitely guide them to professional support?",
-                    a: [
-                        { text: "Immediately, as soon as they mention any sadness.", correct: false, feedback: "Some sadness is normal. Jumping straight to professionals immediately might isolate them." },
-                        { text: "Only if they ask you directly to help them find a doctor.", correct: false, feedback: "Many teens struggle to ask for help directly even when they desperately need it." },
-                        { text: "If they talk about self-harm, express prolonged hopelessness, or if the pressure starts to severely affect your own well-being.", correct: true, feedback: "Correct! These are crucial boundary limits where peer support must transition to professional care." }
-                    ]
-                },
-                {
-                    q: "Which of these is a healthy boundary when supporting a friend?",
-                    a: [
-                        { text: "Being available to text 24/7, no matter how exhausted you are.", correct: false, feedback: "This leads to severe burnout. You cannot hold up a friend if you fall down yourself." },
-                        { text: "Understanding that you cannot fix their problems, and ensuring you step back or seek help if it feels too heavy.", correct: true, feedback: "Perfect. Empathetic boundaries keep both you and your friend safe." },
-                        { text: "Keeping their distress a complete secret even if they talk about hurting themselves.", correct: false, feedback: "Never keep self-harm thoughts secret. Safety always overrides confidentiality." }
-                    ]
-                }
-            ],
             scenarios: {
                 1: {
                     friendName: "Aarav",
@@ -2774,7 +2740,6 @@
 
                 // Populate all form fields after load
                 cmsPopulateStaticFields();
-                cmsRenderQuizEditor();
                 cmsPopulateWtrhLevelForm();
                 cmsRenderMeterEditor();
             }
@@ -2928,10 +2893,12 @@
                 document.getElementById('cms-contact-instagram-url').value = cfg.contact.instagramUrl;
             }
 
-            // Global titles
-            if (cfg.quiz) {
-                document.getElementById('cms-quiz-section-title').value = cfg.quiz.sectionTitle;
-                document.getElementById('cms-quiz-section-desc').value = cfg.quiz.sectionDesc;
+            // Global titles & Survey Settings
+            if (cfg.survey) {
+                document.getElementById('cms-survey-section-title').value = cfg.survey.sectionTitle || '';
+                document.getElementById('cms-survey-section-desc').value = cfg.survey.sectionDesc || '';
+                document.getElementById('cms-survey-q1-label').value = cfg.survey.q1Label || '';
+                document.getElementById('cms-survey-q2-label').value = cfg.survey.q2Label || '';
             }
             if (cfg.wtrh) {
                 document.getElementById('cms-wtrh-section-title').value = cfg.wtrh.sectionTitle;
@@ -2943,47 +2910,7 @@
             }
         }
 
-        // Render Quiz Accordions
-        function cmsRenderQuizEditor() {
-            const container = document.getElementById('cms-quiz-questions-container');
-            container.innerHTML = '';
-            
-            activeCmsConfig.quizQuestions.forEach((qObj, qIdx) => {
-                const card = document.createElement('div');
-                card.className = 'cms-quiz-question-card' + (qIdx === 0 ? ' open' : '');
-                card.innerHTML = `
-                    <div class="cms-quiz-question-header" onclick="this.parentElement.classList.toggle('open')">
-                        Question ${qIdx + 1}: ${escapeHTML(qObj.q)}
-                    </div>
-                    <div class="cms-quiz-question-body">
-                        <div class="form-group" style="margin-bottom: 16px;">
-                            <label>Question Text</label>
-                            <input type="text" class="cms-q-text-${qIdx}" value="${escapeHTML(qObj.q)}" required oninput="document.querySelectorAll('.cms-quiz-question-header')[${qIdx}].textContent = 'Question ' + (${qIdx} + 1) + ': ' + this.value">
-                        </div>
-                        <h5>Answers & Explanations</h5>
-                        ${qObj.a.map((ans, aIdx) => `
-                            <div class="cms-opt-editor-card">
-                                <div class="cms-opt-header" style="display:flex; justify-content:space-between; align-items:center;">
-                                    <span>Choice Option #${aIdx + 1}</span>
-                                    <label style="display:inline-flex; align-items:center; gap: 4px; font-size:0.85rem; font-weight:normal; margin-bottom:0; cursor:pointer;">
-                                        <input type="radio" name="cms-q-correct-${qIdx}" class="cms-a-radio-${qIdx}-${aIdx}" ${ans.correct ? 'checked' : ''}> Correct Answer
-                                    </label>
-                                </div>
-                                <div class="form-group" style="margin-bottom: 8px;">
-                                    <label>Choice Text</label>
-                                    <input type="text" class="cms-a-text-${qIdx}-${aIdx}" value="${escapeHTML(ans.text)}" required>
-                                </div>
-                                <div class="form-group" style="margin-bottom:0;">
-                                    <label>Feedback Explanation Tooltip</label>
-                                    <input type="text" class="cms-a-feedback-${qIdx}-${aIdx}" value="${escapeHTML(ans.feedback)}" required>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
+        // Quiz editor removed
 
         // Render Simulator Level Information & Step sidebar
         function cmsPopulateWtrhLevelForm() {
@@ -3423,30 +3350,18 @@
             cfg.contact.instagram = document.getElementById('cms-contact-instagram').value.trim();
             cfg.contact.instagramUrl = document.getElementById('cms-contact-instagram-url').value.trim();
 
-            cfg.quiz.sectionTitle = document.getElementById('cms-quiz-section-title').value.trim();
-            cfg.quiz.sectionDesc = document.getElementById('cms-quiz-section-desc').value.trim();
+            // 3. Gather Tab 3 (Survey Settings)
+            cfg.survey = cfg.survey || {};
+            cfg.survey.sectionTitle = document.getElementById('cms-survey-section-title').value.trim();
+            cfg.survey.sectionDesc = document.getElementById('cms-survey-section-desc').value.trim();
+            cfg.survey.q1Label = document.getElementById('cms-survey-q1-label').value.trim();
+            cfg.survey.q2Label = document.getElementById('cms-survey-q2-label').value.trim();
             
             cfg.wtrh.sectionTitle = document.getElementById('cms-wtrh-section-title').value.trim();
             cfg.wtrh.sectionDesc = document.getElementById('cms-wtrh-section-desc').value.trim();
 
             cfg.sm.sectionTitle = document.getElementById('cms-sm-section-title').value.trim();
             cfg.sm.sectionDesc = document.getElementById('cms-sm-section-desc').value.trim();
-
-            // 3. Gather Tab 3 (Quiz Questions)
-            const quizCards = document.querySelectorAll('#cms-quiz-questions-container .cms-quiz-question-card');
-            const newQuestions = [];
-            quizCards.forEach((card, qIdx) => {
-                const q = card.querySelector(`.cms-q-text-${qIdx}`).value.trim();
-                const a = [];
-                for (let aIdx = 0; aIdx < 3; aIdx++) {
-                    const text = card.querySelector(`.cms-a-text-${qIdx}-${aIdx}`).value.trim();
-                    const correct = card.querySelector(`.cms-a-radio-${qIdx}-${aIdx}`).checked;
-                    const feedback = card.querySelector(`.cms-a-feedback-${qIdx}-${aIdx}`).value.trim();
-                    a.push({ text, correct, feedback });
-                }
-                newQuestions.push({ q, a });
-            });
-            cfg.quizQuestions = newQuestions;
 
             // Commit config object to local storage
             // Save to localStorage (always)
@@ -3494,7 +3409,7 @@
                 try {
                     const imported = JSON.parse(event.target.result);
                     // Minimal validation checking key schemas
-                    if (!imported.hero || !imported.pillars || !imported.scenarios || !imported.quizQuestions) {
+                    if (!imported.hero || !imported.pillars || !imported.scenarios || !imported.survey) {
                         alert("Invalid configuration file. Key variables are missing.");
                         return;
                     }
@@ -3507,7 +3422,6 @@
                     meterActiveLevel = 1;
 
                     cmsPopulateStaticFields();
-                    cmsRenderQuizEditor();
                     cmsPopulateWtrhLevelForm();
                     cmsRenderMeterEditor();
 
@@ -3534,7 +3448,6 @@
                 meterActiveLevel = 1;
 
                 cmsPopulateStaticFields();
-                cmsRenderQuizEditor();
                 cmsPopulateWtrhLevelForm();
                 cmsRenderMeterEditor();
 
