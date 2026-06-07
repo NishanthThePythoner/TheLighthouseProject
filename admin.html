@@ -934,13 +934,28 @@
 
     <!-- ISOLATED LOGIN SCRIPT - runs independently from main script -->
     <script>
+        // Shared Supabase client reference for login (set after main script initializes it)
+        var _adminSupabase = null;
+
         function doAdminLogin() {
             var u = document.getElementById('admin-email');
             var p = document.getElementById('admin-password');
             var e = document.getElementById('login-error-msg');
+            var btn = document.querySelector('#login-form button');
             var username = u ? u.value.trim() : '';
             var password = p ? p.value : '';
-            if (username === 'admin' && password === 'lighthouse2026') {
+
+            if (!username || !password) {
+                if (e) { e.textContent = 'Please enter your username and password.'; e.style.display = 'block'; }
+                return;
+            }
+
+            // Show loading state
+            if (btn) { btn.disabled = true; btn.textContent = 'Logging in...'; }
+            if (e) { e.style.display = 'none'; e.textContent = ''; }
+
+            function onLoginSuccess(method) {
+                if (btn) { btn.disabled = false; btn.textContent = 'Log In'; }
                 var ls = document.getElementById('admin-login-screen');
                 var dp = document.getElementById('admin-dashboard-panel');
                 if (ls) ls.style.display = 'none';
@@ -948,9 +963,53 @@
                 if (typeof initializeDashboard === 'function') {
                     try { initializeDashboard(); } catch(ex) { console.error('Dashboard init error:', ex); }
                 }
-            } else {
-                if (e) { e.textContent = 'Invalid credentials. Use: admin / lighthouse2026'; e.style.display = 'block'; }
             }
+
+            function onLoginFail(msg) {
+                if (btn) { btn.disabled = false; btn.textContent = 'Log In'; }
+                if (e) { e.textContent = msg || 'Invalid credentials. Please try again.'; e.style.display = 'block'; }
+            }
+
+            // 1. Try Supabase auth first (email-based login)
+            var sc = (typeof supabase !== 'undefined' && window._supabaseClient) ? window._supabaseClient : null;
+            if (sc && username.includes('@')) {
+                sc.auth.signInWithPassword({ email: username, password: password })
+                    .then(function(result) {
+                        if (result.error) {
+                            onLoginFail('Supabase Auth Error: ' + result.error.message);
+                        } else {
+                            onLoginSuccess('supabase');
+                        }
+                    })
+                    .catch(function(err) {
+                        onLoginFail('Connection error: ' + err.message);
+                    });
+                return;
+            }
+
+            // 2. Admin username+password direct check (local fallback)
+            if (username === 'admin' && password === 'lighthouse2026') {
+                onLoginSuccess('local');
+                return;
+            }
+
+            // 3. Try Supabase with username as email guess
+            if (sc) {
+                sc.auth.signInWithPassword({ email: username, password: password })
+                    .then(function(result) {
+                        if (result.error) {
+                            onLoginFail('Invalid credentials. Use your Supabase email or admin / lighthouse2026');
+                        } else {
+                            onLoginSuccess('supabase');
+                        }
+                    })
+                    .catch(function() {
+                        onLoginFail('Invalid credentials. Use your Supabase email or admin / lighthouse2026');
+                    });
+                return;
+            }
+
+            onLoginFail('Invalid credentials. Use: admin / lighthouse2026');
         }
     </script>
 
@@ -979,7 +1038,9 @@
         // Initialize Supabase if keys are set
         if (typeof supabase !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY') {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            useMockData = false; // Default to live if keys are set
+            useMockData = false;
+            // Expose for isolated login script
+            window._supabaseClient = supabaseClient;
         }
 
         // Secure SHA-256 hashing helper using Web Crypto API
@@ -2669,21 +2730,55 @@
                 });
             });
 
-            // Load saved settings or seed defaults
-            const saved = localStorage.getItem('lighthouse-cms-config');
-            if (saved) {
-                try {
-                    activeCmsConfig = JSON.parse(saved);
-                    // Handle retrofitting older configurations if keys are missing
-                    activeCmsConfig = { ...cmsDefaults, ...activeCmsConfig };
-                } catch (e) {
-                    console.error("Failed parsing saved CMS config, resetting to defaults", e);
-                    activeCmsConfig = JSON.parse(JSON.stringify(cmsDefaults));
+            // Load saved settings: try Supabase first, then localStorage, then defaults
+            async function loadCmsConfig() {
+                let loaded = false;
+
+                // Try Supabase first
+                if (supabaseClient) {
+                    try {
+                        const { data, error } = await supabaseClient
+                            .from('cms_config')
+                            .select('config')
+                            .eq('id', 1)
+                            .single();
+                        if (!error && data && data.config) {
+                            activeCmsConfig = { ...cmsDefaults, ...data.config };
+                            localStorage.setItem('lighthouse-cms-config', JSON.stringify(activeCmsConfig));
+                            logAuditEvent("CMS", "CMS config loaded from Supabase cloud", "info");
+                            loaded = true;
+                        }
+                    } catch (err) {
+                        console.warn('Supabase CMS load failed, falling back to localStorage:', err);
+                    }
                 }
-            } else {
-                activeCmsConfig = JSON.parse(JSON.stringify(cmsDefaults));
-                localStorage.setItem('lighthouse-cms-config', JSON.stringify(activeCmsConfig));
+
+                // Fallback to localStorage
+                if (!loaded) {
+                    const saved = localStorage.getItem('lighthouse-cms-config');
+                    if (saved) {
+                        try {
+                            activeCmsConfig = { ...cmsDefaults, ...JSON.parse(saved) };
+                            loaded = true;
+                        } catch (e) {
+                            console.error("Failed parsing saved CMS config, resetting to defaults", e);
+                        }
+                    }
+                }
+
+                // Fall back to defaults
+                if (!loaded) {
+                    activeCmsConfig = JSON.parse(JSON.stringify(cmsDefaults));
+                    localStorage.setItem('lighthouse-cms-config', JSON.stringify(activeCmsConfig));
+                }
+
+                // Populate all form fields after load
+                cmsPopulateStaticFields();
+                cmsRenderQuizEditor();
+                cmsPopulateWtrhLevelForm();
+                cmsRenderMeterEditor();
             }
+            loadCmsConfig();
 
             // Setup Portability buttons
             document.getElementById('cms-reset-btn').addEventListener('click', cmsResetConfig);
@@ -3359,8 +3454,23 @@
             cfg.quizQuestions = newQuestions;
 
             // Commit config object to local storage
+            // Save to localStorage (always)
             localStorage.setItem('lighthouse-cms-config', JSON.stringify(cfg));
-            
+
+            // Sync to Supabase if connected
+            if (supabaseClient) {
+                supabaseClient
+                    .from('cms_config')
+                    .upsert({ id: 1, config: cfg, updated_at: new Date().toISOString() }, { onConflict: 'id' })
+                    .then(({ error }) => {
+                        if (error) {
+                            console.warn('CMS Supabase sync failed (table may not exist yet):', error.message);
+                        } else {
+                            logAuditEvent("CMS", "CMS config synced to Supabase cloud", "success");
+                        }
+                    });
+            }
+
             logAuditEvent("CMS", "Website dynamic content editor configuration saved successfully", "success");
             showToast("Website customized settings saved successfully!");
         }
