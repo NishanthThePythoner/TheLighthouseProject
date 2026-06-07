@@ -1200,20 +1200,57 @@ body.dark-mode .ambient-blob-3 {
     border: 1px solid var(--clr-border);
 }
 
-/* Aligns peer nodes in a circular formation */
+/* Aligns peer nodes in a circular formation — start positions are pulled farther out */
 #vis-f1 {
-    top: -10px;
+    top: -20px;
     left: 80px;
+    animation: friendApproachTop 2.8s ease-in-out infinite;
 }
 
 #vis-f2 {
-    bottom: -10px;
-    left: 10px;
+    bottom: -20px;
+    left: 0px;
+    animation: friendApproachBottomLeft 2.8s ease-in-out infinite 0.35s;
 }
 
 #vis-f3 {
-    bottom: -10px;
-    right: 10px;
+    bottom: -20px;
+    right: 0px;
+    animation: friendApproachBottomRight 2.8s ease-in-out infinite 0.7s;
+}
+
+/* Friends coming closer — keyframes move each node toward the center then back */
+@keyframes friendApproachTop {
+    0%, 100% {
+        transform: translateY(0px) scale(1);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    45%, 55% {
+        transform: translateY(28px) scale(1.08);
+        box-shadow: 0 6px 20px rgba(var(--clr-secondary-rgb, 90,160,120), 0.35);
+    }
+}
+
+@keyframes friendApproachBottomLeft {
+    0%, 100% {
+        transform: translate(0px, 0px) scale(1);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    45%, 55% {
+        transform: translate(22px, -22px) scale(1.08);
+        box-shadow: 0 6px 20px rgba(var(--clr-secondary-rgb, 90,160,120), 0.35);
+    }
+}
+
+@keyframes friendApproachBottomRight {
+    0%, 100% {
+        transform: translate(0px, 0px) scale(1);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    45%, 55% {
+        transform: translate(-22px, -22px) scale(1.08);
+        box-shadow: 0 6px 20px rgba(var(--clr-secondary-rgb, 90,160,120), 0.35);
+    }
 }
 
 /* Network lines or links connections */
@@ -1221,41 +1258,18 @@ body.dark-mode .ambient-blob-3 {
     border-color: var(--clr-secondary);
     background-color: var(--clr-secondary-light);
     color: var(--clr-secondary);
-    transform: scale(1.05);
 }
 
 .friend-node.disconnected {
     border-color: var(--clr-border);
     color: #BBBBBB;
-    transform: scale(0.9) translate(10px, 10px);
+    animation: none !important;
+    transform: scale(0.9) translate(12px, 12px);
 }
 
-/* Beacon Pulse ring animation around the distress point */
+/* Hide the old beacon pulse ring */
 .beacon-pulse {
-    position: absolute;
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    border: 2px solid var(--clr-primary);
-    opacity: 0;
-    z-index: 2;
-    pointer-events: none;
-    animation: beaconPulseAnim 2.5s infinite;
-}
-
-.perspective-card.traditional-mode .beacon-pulse {
     display: none;
-}
-
-@keyframes beaconPulseAnim {
-    0% {
-        transform: scale(0.5);
-        opacity: 0.8;
-    }
-    100% {
-        transform: scale(1.8);
-        opacity: 0;
-    }
 }
 
 /* ==========================================================================
