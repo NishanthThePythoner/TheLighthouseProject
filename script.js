@@ -2092,7 +2092,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     .select('config')
                     .eq('id', 1)
                     .single();
-                if (!error && data && data.config) {
+                if (error) {
+                    console.error('Supabase CMS load query failed:', error.message, error.details, error.hint);
+                } else if (data && data.config) {
                     localStorage.setItem('lighthouse-cms-config', JSON.stringify(data.config));
                     applyDynamicCMSConfig();
                     if (typeof smStartGame === 'function') {
