@@ -133,11 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 safeUpdateText('sm-section-desc', cmsConfig.sm.sectionDesc);
             }
 
-            // Quiz Section Title/Desc
-            if (cmsConfig.quiz) {
-                safeUpdateText('quiz-section-title', cmsConfig.quiz.sectionTitle);
-                safeUpdateText('quiz-section-desc', cmsConfig.quiz.sectionDesc);
-            }
 
             // Share Thoughts (Survey) Section Title/Desc
             if (cmsConfig.survey) {
@@ -172,12 +167,26 @@ document.addEventListener('DOMContentLoaded', () => {
             // Game Level Variables Override
             if (cmsConfig.scenarios) {
                 scenarios = cmsConfig.scenarios;
+                for (let lvl = 1; lvl <= 4; lvl++) {
+                    const sc = scenarios[lvl];
+                    if (sc) {
+                        const card = document.querySelector(`.level-card[data-level="${lvl}"]`);
+                        if (card) {
+                            const metaEl = card.querySelector('.level-card-meta');
+                            if (metaEl && sc.friendName && sc.relation) {
+                                metaEl.textContent = `${sc.friendName} • ${sc.relation}`;
+                            }
+                            const descEl = card.querySelector('.level-card-desc');
+                            if (descEl && sc.background) {
+                                const shortBg = sc.background.length > 120 ? sc.background.substring(0, 117) + '...' : sc.background;
+                                descEl.textContent = shortBg;
+                            }
+                        }
+                    }
+                }
             }
             if (cmsConfig.smScenarios) {
                 smScenarios = cmsConfig.smScenarios;
-            }
-            if (cmsConfig.quizQuestions) {
-                quizQuestions = cmsConfig.quizQuestions;
             }
 
         } catch (e) {
@@ -1464,147 +1473,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* ==========================================================================
-       5. PEER SUPPORT INSTINCTS QUIZ (LIGHTHOUSE COMPANION)
-       ========================================================================== */
-    const startScreen = document.getElementById('quiz-start-screen');
-    const questionScreen = document.getElementById('quiz-question-screen');
-    const resultScreen = document.getElementById('quiz-result-screen');
-
-    const startQuizBtn = document.getElementById('start-quiz-btn');
-    const retryQuizBtn = document.getElementById('retry-quiz-btn');
-
-    const quizProgressFill = document.getElementById('quiz-progress-fill');
-    const quizProgressText = document.getElementById('quiz-progress-text');
-    const quizQuestionTitle = document.getElementById('quiz-question-title');
-    const quizAnswersBox = document.getElementById('quiz-answers');
-
-    const resultBadgeIcon = document.getElementById('result-badge-icon');
-    const resultTitle = document.getElementById('result-title');
-    const resultScore = document.getElementById('result-score');
-    const resultDesc = document.getElementById('result-desc');
-
-    let quizQuestions = [
-        {
-            q: "Your friend tells you they've been feeling extremely down lately. What is the most supportive initial response?",
-            a: [
-                { text: "Don't worry! You have so much to be happy about. Let's go watch a movie to cheer you up.", correct: false, feedback: "This dismisses their feelings and rushes into a distraction. Listening is key." },
-                { text: "I'm really sorry you're going through this. Thank you for sharing it with me. I'm here for you.", correct: true, feedback: "Excellent. This validates their feelings and builds deep emotional safety immediately." },
-                { text: "Have you tried looking at the positive side? I think you just need to get out of the house.", correct: false, feedback: "This borders on lecturing and minimizes the complexity of mental distress." }
-            ]
-        },
-        {
-            q: "What is the primary difference between 'Supporting' and 'Solving' a peer's emotional distress?",
-            a: [
-                { text: "Supporting means taking action, while solving means listening.", correct: false, feedback: "Incorrect. The roles are actually reversed in practice." },
-                { text: "Supporting means validating their feelings and walking alongside them; solving means trying to diagnose the issue and giving immediate advice.", correct: true, feedback: "Spot on! The goal is support (being present) not solving (acting as a therapist)." },
-                { text: "Supporting is for close friends; solving is what school counselors do.", correct: false, feedback: "School counselors support and guide, they don't treat teens like mechanical problems." }
-            ]
-        },
-        {
-            q: "A friend says they are feeling overwhelmed. At what point should you definitely guide them to professional support?",
-            a: [
-                { text: "Immediately, as soon as they mention any sadness.", correct: false, feedback: "Some sadness is normal. Jumping straight to professionals immediately might isolate them." },
-                { text: "Only if they ask you directly to help them find a doctor.", correct: false, feedback: "Many teens struggle to ask for help directly even when they desperately need it." },
-                { text: "If they talk about self-harm, express prolonged hopelessness, or if the pressure starts to severely affect your own well-being.", correct: true, feedback: "Correct! These are crucial boundary limits where peer support must transition to professional care." }
-            ]
-        },
-        {
-            q: "Which of these is a healthy boundary when supporting a friend?",
-            a: [
-                { text: "Being available to text 24/7, no matter how exhausted you are.", correct: false, feedback: "This leads to severe burnout. You cannot hold up a friend if you fall down yourself." },
-                { text: "Understanding that you cannot fix their problems, and ensuring you step back or seek help if it feels too heavy.", correct: true, feedback: "Perfect. Empathetic boundaries keep both you and your friend safe." },
-                { text: "Keeping their distress a complete secret even if they talk about hurting themselves.", correct: false, feedback: "Never keep self-harm thoughts secret. Safety always overrides confidentiality." }
-            ]
-        }
-    ];
-
-    let currentQ = 0;
-    let score = 0;
-
-    function runQuiz() {
-        startScreen.style.display = 'none';
-        resultScreen.style.display = 'none';
-        questionScreen.style.display = 'block';
-        currentQ = 0;
-        score = 0;
-        loadQuestion();
-    }
-
-    function loadQuestion() {
-        const question = quizQuestions[currentQ];
-        quizQuestionTitle.textContent = question.q;
-
-        // Progress bar updates
-        const percent = ((currentQ) / quizQuestions.length) * 100;
-        quizProgressFill.style.width = percent + '%';
-        quizProgressText.textContent = `Question ${currentQ + 1} of ${quizQuestions.length}`;
-
-        quizAnswersBox.innerHTML = '';
-
-        question.a.forEach(answer => {
-            const btn = document.createElement('button');
-            btn.className = 'answer-btn';
-            btn.textContent = answer.text;
-
-            btn.addEventListener('click', () => {
-                // Disable other options immediately
-                quizAnswersBox.querySelectorAll('.answer-btn').forEach(b => b.disabled = true);
-
-                if (answer.correct) {
-                    btn.classList.add('correct');
-                    score++;
-                } else {
-                    btn.classList.add('incorrect');
-                }
-
-                // Append small feedback text below choice
-                const feedbackText = document.createElement('p');
-                feedbackText.style.fontSize = '0.85rem';
-                feedbackText.style.marginTop = '12px';
-                feedbackText.style.fontWeight = '600';
-                feedbackText.style.color = answer.correct ? 'var(--clr-success)' : 'var(--clr-primary)';
-                feedbackText.textContent = answer.feedback;
-                quizAnswersBox.appendChild(feedbackText);
-
-                setTimeout(() => {
-                    currentQ++;
-                    if (currentQ < quizQuestions.length) {
-                        loadQuestion();
-                    } else {
-                        showResults();
-                    }
-                }, 3000);
-            });
-            quizAnswersBox.appendChild(btn);
-        });
-    }
-
-    function showResults() {
-        questionScreen.style.display = 'none';
-        resultScreen.style.display = 'block';
-
-        resultScore.textContent = `You scored: ${score} / ${quizQuestions.length}`;
-
-        if (score === 4) {
-            resultBadgeIcon.textContent = '🕯️';
-            resultTitle.textContent = "Lighthouse Companion!";
-            resultDesc.textContent = "Outstanding work! You possess high emotional awareness, deeply understand active listening boundaries, and know how to support friends without attempting to take over and fix their lives.";
-        } else if (score >= 2) {
-            resultBadgeIcon.textContent = '🤝';
-            resultTitle.textContent = "Compassionate Friend!";
-            resultDesc.textContent = "You have great instincts and genuine empathy! You understand peer support, but sometimes lean slightly too much toward giving instant solutions or violating personal boundaries. A little practice is all it takes.";
-        } else {
-            resultBadgeIcon.textContent = '🌱';
-            resultTitle.textContent = "Sincere Learner!";
-            resultDesc.textContent = "You care deeply about your friends, which is a powerful foundation! However, you may currently struggle with active listening and boundaries. Explore our resources or attend a circle session to learn peer support skills.";
-        }
-    }
-
-    if (startQuizBtn) {
-        startQuizBtn.addEventListener('click', runQuiz);
-        retryQuizBtn.addEventListener('click', runQuiz);
-    }
+    // Quiz section removed
 
 
     /* ==========================================================================
@@ -2207,10 +2076,34 @@ document.addEventListener('DOMContentLoaded', () => {
         smReplayAllBtn.addEventListener('click', smStartGame);
     }
 
+    async function loadCmsConfigAndApply() {
+        if (supabaseClient) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('cms_config')
+                    .select('config')
+                    .eq('id', 1)
+                    .single();
+                if (!error && data && data.config) {
+                    localStorage.setItem('lighthouse-cms-config', JSON.stringify(data.config));
+                    applyDynamicCMSConfig();
+                    if (typeof smStartGame === 'function') {
+                        smStartGame();
+                    }
+                }
+            } catch (err) {
+                console.warn('Supabase CMS load failed:', err);
+            }
+        }
+    }
+
     // Apply customized content overrides before starting game engines
     applyDynamicCMSConfig();
 
     // Auto-init Support Meter Game on load
     smStartGame();
+
+    // Load latest CMS config from Supabase in background
+    loadCmsConfigAndApply();
 
 });
