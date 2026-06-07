@@ -2088,8 +2088,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function loadCmsConfigAndApply() {
+        console.log("loadCmsConfigAndApply called. supabaseClient initialized:", !!supabaseClient);
         if (supabaseClient) {
             try {
+                console.log("Fetching CMS config from Supabase database...");
                 const { data, error } = await supabaseClient
                     .from('cms_config')
                     .select('config')
@@ -2098,11 +2100,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (error) {
                     console.error('Supabase CMS load query failed:', error.message, error.details, error.hint);
                 } else if (data && data.config) {
+                    console.log("Supabase CMS config loaded successfully:", data.config);
                     localStorage.setItem('lighthouse-cms-config', JSON.stringify(data.config));
                     applyDynamicCMSConfig();
                     if (typeof smStartGame === 'function') {
                         smStartGame();
                     }
+                } else {
+                    console.warn("Supabase CMS load query returned no data.");
                 }
             } catch (err) {
                 console.warn('Supabase CMS load failed:', err);

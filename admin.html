@@ -2704,10 +2704,12 @@
             // Load saved settings: try Supabase first, then localStorage, then defaults
             async function loadCmsConfig() {
                 let loaded = false;
+                console.log("admin.html loadCmsConfig called. supabaseClient initialized:", !!supabaseClient);
 
                 // Try Supabase first
                 if (supabaseClient) {
                     try {
+                        console.log("admin.html fetching CMS config from Supabase...");
                         const { data, error } = await supabaseClient
                             .from('cms_config')
                             .select('config')
@@ -2717,10 +2719,13 @@
                             console.error('Supabase CMS load query failed:', error.message, error.details, error.hint);
                             logAuditEvent("CMS", `Failed to load CMS config: ${error.message}`, "error");
                         } else if (data && data.config) {
+                            console.log("admin.html CMS config loaded successfully:", data.config);
                             activeCmsConfig = { ...cmsDefaults, ...data.config };
                             localStorage.setItem('lighthouse-cms-config', JSON.stringify(activeCmsConfig));
                             logAuditEvent("CMS", "CMS config loaded from Supabase cloud", "info");
                             loaded = true;
+                        } else {
+                            console.warn("admin.html CMS load query returned no data.");
                         }
                     } catch (err) {
                         console.warn('Supabase CMS load failed, falling back to localStorage:', err);
