@@ -2988,6 +2988,11 @@
                 document.getElementById('cms-sm-section-title').value = cfg.sm.sectionTitle || 'The Support Meter';
                 document.getElementById('cms-sm-section-desc').value = cfg.sm.sectionDesc || 'Are you supporting, advising, or fixing?';
             }
+
+            // Sync metrics fields
+            if (typeof populateMetricsFields === 'function') {
+                populateMetricsFields();
+            }
         }
 
         // Quiz editor removed
