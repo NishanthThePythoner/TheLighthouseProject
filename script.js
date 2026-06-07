@@ -31,15 +31,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load dynamic statistics if saved in localStorage
     function loadDynamicMetrics() {
+        const rawConfig = localStorage.getItem('lighthouse-cms-config');
+        let cfgMetrics = null;
+        if (rawConfig) {
+            try {
+                const cmsConfig = JSON.parse(rawConfig);
+                if (cmsConfig && cmsConfig.metrics) {
+                    cfgMetrics = cmsConfig.metrics;
+                }
+            } catch (e) {}
+        }
+
         for (let i = 1; i <= 4; i++) {
-            const numVal = localStorage.getItem(`metric-num-${i}`);
-            const lblVal = localStorage.getItem(`metric-lbl-${i}`);
+            const numVal = cfgMetrics ? cfgMetrics[`metric-num-${i}`] : localStorage.getItem(`metric-num-${i}`);
+            const lblVal = cfgMetrics ? cfgMetrics[`metric-lbl-${i}`] : localStorage.getItem(`metric-lbl-${i}`);
             
             const numElem = document.getElementById(`metric-num-${i}`);
             const lblElem = document.getElementById(`metric-lbl-${i}`);
             
-            if (numVal !== null && numElem) numElem.textContent = numVal;
-            if (lblVal !== null && lblElem) lblElem.textContent = lblVal;
+            if (numVal !== null && numVal !== undefined && numElem) numElem.textContent = numVal;
+            if (lblVal !== null && lblVal !== undefined && lblElem) lblElem.textContent = lblVal;
         }
     }
     loadDynamicMetrics();
