@@ -936,33 +936,6 @@
     <script>
 
         // =====================================================
-        // STANDALONE LOGIN FUNCTION (runs independently, no dependencies)
-        // =====================================================
-        function doAdminLogin() {
-            var username = (document.getElementById('admin-email') || {}).value || '';
-            var password = (document.getElementById('admin-password') || {}).value || '';
-            var errEl = document.getElementById('login-error-msg');
-            username = username.trim();
-
-            if (username === 'admin' && password === 'lighthouse2026') {
-                var loginScreen = document.getElementById('admin-login-screen');
-                var dashPanel = document.getElementById('admin-dashboard-panel');
-                if (loginScreen) loginScreen.style.display = 'none';
-                if (dashPanel) dashPanel.style.display = 'block';
-                // Trigger full init if available
-                if (typeof initializeDashboard === 'function') {
-                    try { initializeDashboard(); } catch(e) {}
-                }
-                return;
-            }
-
-            if (errEl) {
-                errEl.textContent = 'Invalid credentials. Use: admin / lighthouse2026';
-                errEl.style.display = 'block';
-            }
-        }
-
-        // =====================================================
         // Theme initialization
         const initTheme = () => {
             const savedTheme = localStorage.getItem('theme');
