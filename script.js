@@ -160,13 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cmsConfig.survey) {
                 safeUpdateText('survey-section-title', cmsConfig.survey.sectionTitle);
                 safeUpdateText('survey-section-desc', cmsConfig.survey.sectionDesc);
-                if (cmsConfig.survey.q1Label) {
-                    const q1Lbl = document.querySelector('label[for="survey-q1"]');
-                    if (q1Lbl) q1Lbl.innerHTML = `${escapeHTML(cmsConfig.survey.q1Label)} <span class="required" aria-hidden="true">*</span>`;
-                }
-                if (cmsConfig.survey.q2Label) {
-                    const q2Lbl = document.querySelector('label[for="survey-q2"]');
-                    if (q2Lbl) q2Lbl.innerHTML = `${escapeHTML(cmsConfig.survey.q2Label)} <span class="required" aria-hidden="true">*</span>`;
+                for (let i = 1; i <= 5; i++) {
+                    const qLblText = cmsConfig.survey[`q${i}Label`];
+                    if (qLblText) {
+                        const qLbl = document.querySelector(`label[for="survey-q${i}"]`);
+                        if (qLbl) qLbl.innerHTML = `${escapeHTML(qLblText)} <span class="required" aria-hidden="true">*</span>`;
+                    }
                 }
             }
 
@@ -1518,6 +1517,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const surveyForm = document.getElementById('anonymous-survey-form');
     const surveyQ1 = document.getElementById('survey-q1');
     const surveyQ2 = document.getElementById('survey-q2');
+    const surveyQ3 = document.getElementById('survey-q3');
+    const surveyQ4 = document.getElementById('survey-q4');
+    const surveyQ5 = document.getElementById('survey-q5');
     const surveySuccessToast = document.getElementById('survey-success-toast');
 
     function validateField(inputElement, errorElement, checkCondition) {
@@ -1538,10 +1540,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const isQ1Valid = validateField(surveyQ1, document.getElementById('error-q1'), surveyQ1.value.trim() === '');
             const isQ2Valid = validateField(surveyQ2, document.getElementById('error-q2'), surveyQ2.value.trim() === '');
+            const isQ3Valid = validateField(surveyQ3, document.getElementById('error-q3'), surveyQ3.value.trim() === '');
+            const isQ4Valid = validateField(surveyQ4, document.getElementById('error-q4'), surveyQ4.value.trim() === '');
+            const isQ5Valid = validateField(surveyQ5, document.getElementById('error-q5'), surveyQ5.value.trim() === '');
 
-            if (isQ1Valid && isQ2Valid) {
+            if (isQ1Valid && isQ2Valid && isQ3Valid && isQ4Valid && isQ5Valid) {
                 const q1Value = surveyQ1.value.trim();
                 const q2Value = surveyQ2.value.trim();
+                const q3Value = surveyQ3.value.trim();
+                const q4Value = surveyQ4.value.trim();
+                const q5Value = surveyQ5.value.trim();
 
                 // Async submission to Supabase
                 if (supabaseClient) {
@@ -1549,7 +1557,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         const { error } = await supabaseClient
                             .from('survey_responses')
                             .insert([
-                                { q1_answer: q1Value, q2_answer: q2Value }
+                                { 
+                                    q1_answer: q1Value, 
+                                    q2_answer: q2Value,
+                                    q3_answer: q3Value,
+                                    q4_answer: q4Value,
+                                    q5_answer: q5Value
+                                }
                             ]);
                         if (error) throw error;
                         console.log('Anonymous survey response stored in database.');
@@ -1557,7 +1571,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.error('Database insertion failed:', dbErr.message);
                     }
                 } else {
-                    console.log('Supabase client not configured. Saving locally (mock):', { q1_answer: q1Value, q2_answer: q2Value });
+                    console.log('Supabase client not configured. Saving locally (mock):', { q1_answer: q1Value, q2_answer: q2Value, q3_answer: q3Value, q4_answer: q4Value, q5_answer: q5Value });
                     let localResponses = localStorage.getItem('mock-survey-responses');
                     localResponses = localResponses ? JSON.parse(localResponses) : [];
                     const nextId = localResponses.reduce((max, item) => Math.max(max, item.id), 100) + 1;
@@ -1565,7 +1579,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         id: nextId,
                         created_at: new Date().toISOString(),
                         q1_answer: q1Value,
-                        q2_answer: q2Value
+                        q2_answer: q2Value,
+                        q3_answer: q3Value,
+                        q4_answer: q4Value,
+                        q5_answer: q5Value
                     });
                     localStorage.setItem('mock-survey-responses', JSON.stringify(localResponses));
                 }
