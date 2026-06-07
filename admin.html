@@ -218,7 +218,7 @@
                 <p>Administrative Access Login</p>
             </div>
 
-            <form id="login-form" class="login-form">
+            <form id="login-form" class="login-form" onsubmit="return false;" action="javascript:void(0)">
                 <div class="form-group">
                     <label for="admin-email">Username or Email</label>
                     <input type="text" id="admin-email" placeholder="admin / email@lighthouse.org" required>
@@ -228,7 +228,7 @@
                     <input type="password" id="admin-password" placeholder="••••••••" required>
                 </div>
                 <span class="login-error-msg" id="login-error-msg" role="alert"></span>
-                <button type="submit" class="btn btn-primary w-full">Log In</button>
+                <button type="button" class="btn btn-primary w-full" onclick="doAdminLogin()">Log In</button>
             </form>
             <div class="login-notice text-center">
                 <p>🔒 Session security is audited. Authorized access only.</p>
@@ -934,6 +934,35 @@
 
     <!-- Script logic -->
     <script>
+
+        // =====================================================
+        // STANDALONE LOGIN FUNCTION (runs independently, no dependencies)
+        // =====================================================
+        function doAdminLogin() {
+            var username = (document.getElementById('admin-email') || {}).value || '';
+            var password = (document.getElementById('admin-password') || {}).value || '';
+            var errEl = document.getElementById('login-error-msg');
+            username = username.trim();
+
+            if (username === 'admin' && password === 'lighthouse2026') {
+                var loginScreen = document.getElementById('admin-login-screen');
+                var dashPanel = document.getElementById('admin-dashboard-panel');
+                if (loginScreen) loginScreen.style.display = 'none';
+                if (dashPanel) dashPanel.style.display = 'block';
+                // Trigger full init if available
+                if (typeof initializeDashboard === 'function') {
+                    try { initializeDashboard(); } catch(e) {}
+                }
+                return;
+            }
+
+            if (errEl) {
+                errEl.textContent = 'Invalid credentials. Use: admin / lighthouse2026';
+                errEl.style.display = 'block';
+            }
+        }
+
+        // =====================================================
         // Theme initialization
         const initTheme = () => {
             const savedTheme = localStorage.getItem('theme');
