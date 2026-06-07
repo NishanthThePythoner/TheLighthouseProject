@@ -932,6 +932,28 @@
         <span class="toast-message" id="admin-toast-message">Operation successful!</span>
     </div>
 
+    <!-- ISOLATED LOGIN SCRIPT - runs independently from main script -->
+    <script>
+        function doAdminLogin() {
+            var u = document.getElementById('admin-email');
+            var p = document.getElementById('admin-password');
+            var e = document.getElementById('login-error-msg');
+            var username = u ? u.value.trim() : '';
+            var password = p ? p.value : '';
+            if (username === 'admin' && password === 'lighthouse2026') {
+                var ls = document.getElementById('admin-login-screen');
+                var dp = document.getElementById('admin-dashboard-panel');
+                if (ls) ls.style.display = 'none';
+                if (dp) dp.style.display = 'block';
+                if (typeof initializeDashboard === 'function') {
+                    try { initializeDashboard(); } catch(ex) { console.error('Dashboard init error:', ex); }
+                }
+            } else {
+                if (e) { e.textContent = 'Invalid credentials. Use: admin / lighthouse2026'; e.style.display = 'block'; }
+            }
+        }
+    </script>
+
     <!-- Script logic -->
     <script>
 
