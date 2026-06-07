@@ -53,8 +53,8 @@ INSERT INTO public.cms_config (id, config)
 VALUES (1, '${JSON.stringify(cmsDefaultsObj).replace(/'/g, "''")}')
 ON CONFLICT (id) DO UPDATE SET config = EXCLUDED.config;
 `;
-        console.log('=== GENERATED SQL ===');
-        console.log(sql);
+        fs.writeFileSync('setup.sql', sql, 'utf8');
+        console.log('Saved to setup.sql');
     } else {
         console.error('Could not find matching closing brace');
     }
